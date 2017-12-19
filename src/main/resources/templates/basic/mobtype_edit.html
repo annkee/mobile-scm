@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>编辑手机类型</title>
+    <link th:href="@{../default/css/page.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/table.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/input.css}" rel="stylesheet"/>
+    <script th:src="@{../js/common/jquery.js}"/>
+    <script th:src="@{../js/common/common.js}"/>
+    <script th:src="@{../js/common/tree.js}"/>
+    <script th:src="@{../js/common/init.js}"/>
+    <script th:src="@{../js/common/json2.js}"/>
+    <script th:src="@{../js/common/relate.js}"/>
+    <script th:src="@{../js/basic/mobType.js}"/>
+    <!--<script>-->
+<!--//        $(document).ready(function () {-->
+<!--//            //初始化返利价格数组-->
+<!--////            var arrStr = $("#bonusList").val();-->
+<!--////            boot(var arrStr);-->
+<!--//        });-->
+
+    <!--</script>-->
+</head>
+
+<body th:onload="'javascript:boot('+'\''+${mobileType.mobileBonusList}+'\''+')'">
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="90%">
+    <tr>
+        <td class="navTd1"></td>
+        <td class="navTd2">基础设置 >>　手机型号管理 >> 编辑型号</td>
+        <td class="navTd3"></td>
+    </tr>
+</table>
+<form action="../mobileType/edit" method="post" th:object="${mobileType}">
+    <table width="500" align="center" style="margin-top:30px" class="inputTable">
+        <tr>
+            <th>型号编号：</th>
+            <td><input readonly="readonly" class="text" name="id" th:value="${mobileType.id}"/></td>
+        </tr>
+        <tr>
+            <th>品牌：</th>
+            <td>
+                <select name="brand" class="text">
+                    <option th:each="brand : ${brandList}" th:value="${brand.name}"
+                            th:if="${brand.name eq mobileType.brand}" selected="selected"
+                            th:text="${brand.name}"></option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>型号名：</th>
+            <td><input class="text" name="name" th:value="${mobileType.name}"/></td>
+        </tr>
+        <tr>
+            <th>进货价：</th>
+            <td><input class="text" name="buyPrice" th:value="${mobileType.buyPrice}"/></td>
+        </tr>
+        <tr>
+            <th>备注：</th>
+            <td><textarea class="text" name="remark"
+                          style="width:300px;height:46px" th:text="${mobileType.remark}"></textarea></td>
+        </tr>
+    </table>
+
+    <table border="0" width="500" align="center" style="margin-top:20px">
+        <tr>
+            <td align="left">返利价格设置</td>
+        </tr>
+    </table>
+    <table border="0" width="500" align="center" style="margin-top:2px" class="table" id="tblPrice">
+        <tr>
+            <th width="160">返利类别</th>
+            <th width="160">返利价格</th>
+            <th>操作</th>
+        </tr>
+        <tr th:name="${bonus.bonusTypeId}" th:each="bonus : ${mobileType.mobileBonusList}">
+            <td th:text="${bonus.bonusTypeName}"></td>
+            <td th:text="${bonus.bonusPrice}"></td>
+            <td>
+                <input type="hidden" id="bonus" th:value="${bonus.bonusTypeId}"/>
+                <input type="hidden" id="bonusList" th:value="${mobileType.mobileBonusList}"/>
+                <a href="#" th:onclick="'javascript:delPrice('+'\''+${bonus.bonusTypeId}+'\''+');'">删除</a></td>
+        </tr>
+
+    </table>
+    <table border="0" width="500" align="center" style="margin-top:0px" class="table">
+        <tr>
+            <th width="160">
+                <select id="bonusType" class="text" style="width:100px">
+                    <option th:each="btype : ${bonusTypeList}" th:value="${btype.id}+':'+${btype.name}"
+                            th:text="${btype.name}"></option>
+                </select>
+            </th>
+            <th width="160">
+                <input class="text" id="bonusPrice" style="width:60px"/>
+            </th>
+            <th>
+                <input class="btn ok" type="button" value="加入" onclick="addBonus();"/>
+            </th>
+        </tr>
+    </table>
+    <table border="0" width="500" align="center" style="margin-top:20px">
+        <tr>
+            <td align="center">
+                <input type="button" class="btn ok" value="确定" onclick="submitType(this.form);"/>
+                <input type="button" class="btn cancel" value="取消" onclick="location='../mobileType/list'"/>
+            </td>
+        </tr>
+    </table>
+</form>
+</body>
+
+</html>

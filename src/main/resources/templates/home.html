@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>手机SCM后台管理系统</title>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <link rel="stylesheet" th:href="@{../default/css/main.css}"/>
+    <link rel="shortcut icon" th:href="@{../images/mobile.ico}" type="image/gif" />
+    <script th:src="@{../js/common/jquery.js}"/>
+    <script th:src="@{../js/common/common.js}"/>
+    <script th:src="@{../js/home.js}"/>
+    <script type="text/javascript">
+        $(function () {
+            $("div [name='退出系统']").live("click", function () {
+                $.ajax({
+                    url: "../user/logout",
+                    method: "get",
+                    success: function () {
+                        window.top.location.href = "../home/login";
+                    }
+                });
+            });
+
+        })
+    </script>
+</head>
+
+<body onselectstart="return false;" oncontextmenu="return false;">
+<input type="hidden" name="ctx" value="/"/>
+<input type="hidden" name="skinpath" value="../default"/>
+<div class="mask"></div>
+<div class="menu">
+    <div class="handle"></div>
+
+</div>
+
+<div class="main">
+    <div class="conDiv">
+        <iframe name="content" width="100%" height="100%" frameborder="0" src="../home/welcome"></iframe>
+    </div>
+</div>
+<!--用加号连接字符串-->
+<div class="foot" th:text="'登录用户☞ '+ ${session.loginUser.account}"></div>
+
+</body>
+</html>

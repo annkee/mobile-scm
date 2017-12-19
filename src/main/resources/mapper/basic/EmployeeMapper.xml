@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctsig.mobilescm.dao.basic.EmployeeDao">
+	
+	<resultMap type="com.ctsig.mobilescm.domain.basic.Employee" id="empResult">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="phone" column="phone"/>
+		<result property="type" column="type"/>
+		<result property="remark" column="remark"/>
+		<association property="user" column="userId" javaType="com.ctsig.mobilescm.domain.system.User">
+			<id property="id" column="user_id"/>
+			<result property="account" column="user_account"/>
+			<result property="status" column="user_status"/>
+			<result property="remark" column="user_remark"/>
+			<result property="createTime" column="user_createTime"/>
+			<result property="skin" column="user_skin"/>
+			<result property="queryScope" column="user_queryScope"/>
+		</association>
+		<association property="department" column="departmentId" javaType="com.ctsig.mobilescm.domain.basic.Department">
+			<id property="id" column="department_id"/>
+			<result property="name" column="department_name"/>
+			<result property="address" column="department_address"/>
+			<result property="phone" column="department_phone"/>
+			<result property="linkman" column="department_linkman"/>
+			<result property="remark" column="department_remark"/>
+		</association>
+	</resultMap>
+	
+	<select id="getEmployeeList" resultMap="empResult">
+		SELECT 
+			e.*,
+			u.id AS user_id,
+			u.account AS user_account,
+			u.status AS user_status,
+			u.remark AS user_remark,
+			u.createTime AS user_createTime,
+			u.skin AS user_skin,
+			u.queryScope AS user_queryScope,
+			d.id AS department_id,
+			d.name AS department_name,
+			d.address AS department_address,
+			d.phone AS department_phone,
+			d.linkman AS department_linkman,
+			d.remark AS department_remark
+		FROM employee e 
+		LEFT JOIN sys_user u ON u.id=e.userId
+		LEFT JOIN department d ON d.id=e.departmentId
+		<where>
+			<if test="param.id != null">
+				AND e.id=#{param.id}
+			</if>
+			<if test="param.name != null">
+				AND e.name LIKE #{param.name}
+			</if>
+			<if test="param.queryScopeList != null">
+				AND e.departmentId IN 
+				<foreach collection="param.queryScopeList" open="(" close=")" separator="," item="deptId">
+					#{deptId}
+				</foreach>
+			</if>
+		</where>
+	</select>
+	
+	<insert id="addEmployee">
+		INSERT INTO employee VALUES(#{employee.id},#{employee.name},#{employee.phone},#{employee.type},#{employee.remark},null,#{employee.department.id})
+	</insert>
+	
+	<delete id="deleteEmployee">
+		DELETE FROM employee WHERE id=#{employee.id}
+	</delete>
+	
+	<update id="editEmployee">
+		UPDATE employee 
+		<set>
+			<if test="employee.name != null">
+				name=#{employee.name},
+			</if>
+			<if test="employee.phone != null">
+				phone=#{employee.phone},
+			</if>
+			<if test="employee.type != null">
+				type=#{type},
+			</if>
+			<if test="employee.remark != null">
+				remark=#{employee.remark},
+			</if>
+			<if test="employee.user != null">
+				userId=#{user.id},
+			</if>
+			<if test="employee.department != null">
+				departmentId=#{employee.department.id},
+			</if>
+		</set>
+		WHERE id=#{employee.id}
+	</update>
+	
+</mapper> 

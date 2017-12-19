@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>日志列表</title>
+    <link th:href="@{../default/css/page.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/table.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/input.css}" rel="stylesheet"/>
+    <link th:href="@{../jquery_ui/blue2.css}" rel="stylesheet"/>
+    <script th:src="@{../js/common/jquery.js}"/>
+    <script th:src="@{../js/common/common.js}"/>
+    <script th:src="@{../js/common/tree.js}"/>
+    <script th:src="@{../js/common/init.js}"/>
+    <script th:src="@{../js/common/json2.js}"/>
+    <script th:src="@{../js/common/relate.js}"/>
+    <script th:src="@{../jquery_ui/jui.js}"/>
+    <script th:src="@{../jquery_ui/ui.datepicker-zh-CN.js}"/>
+    <script th:src="@{../js/system/log.js}"/>
+</head>
+
+<body>
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="90%">
+    <tr>
+        <td class="navTd1"></td>
+        <td class="navTd2">系统管理 >>　日志管理 >> 日志列表</td>
+        <td class="navTd3"></td>
+    </tr>
+</table>
+<form th:action="@{../log/listLog}" th:object="${log}" method="post">
+    <table border="0" width="90%" align="center" style="margin-top:10px">
+        <tr>
+            <td width="60" align="left">开始日期:</td>
+            <td width="100" align="left">
+                <input name="beginDate" id="beginDate" class="date" th:value="${beginDate}" readonly="readonly"/>
+            </td>
+            <td width="60" align="left">结束日期:</td>
+            <td width="100">
+                <input name="endDate" id="endDate" class="date" th:value="${endDate}" readonly="readonly"/>
+            </td>
+            <td width="60" align="left">用户帐号:</td>
+            <td>
+                <select class="text" name="userAccount">
+                    <option value="">全部</option>
+                    <option th:each="user : ${userList}" th:value="${user.account}" th:text="${user.account}">
+                    </option>
+                </select>
+            </td>
+            <td align="left">
+                <input type="submit" class="btn find" value="查询"/>
+                <!--
+                <input type="button" class="btn return" style="width:80px" value="清理日志"/>
+                 -->
+            </td>
+        </tr>
+    </table>
+</form>
+<table class="table" rowNum="15" width="90%" align="center">
+    <tr>
+        <th>动作</th>
+        <th>参数</th>
+        <th>用户帐号</th>
+        <th>操作时间</th>
+    </tr>
+    <tr th:each="log : ${page.dataList}">
+        <td th:text="${log.actionName}"></td>
+        <td th:text="${log.parameter}"></td>
+        <td th:text="${log.account}"></td>
+        <td th:text="${log.operTimeStr}"></td>
+    </tr>
+</table>
+<input type="hidden" id="page" th:value="${page.pageCode}"/>
+</body>
+<script>
+//    追加html分页代码
+    var pages = $("#page");
+    var data = pages.val();
+    pages.after(data);
+</script>
+</html>

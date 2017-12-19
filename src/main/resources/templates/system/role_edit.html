@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>编辑角色</title>
+    <link th:href="@{../default/css/page.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/table.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/input.css}" rel="stylesheet"/>
+    <script th:src="@{../js/common/jquery.js}"/>
+    <script th:src="@{../js/common/common.js}"/>
+    <script th:src="@{../js/common/tree.js}"/>
+    <script th:src="@{../js/common/init.js}"/>
+    <script th:src="@{../js/common/json2.js}"/>
+    <script th:src="@{../js/common/relate.js}"/>
+    <script th:src="@{../js/system/role.js}"/>
+</head>
+
+<body>
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="90%">
+    <tr>
+        <td class="navTd1"></td>
+        <td class="navTd2">系统管理 >>　角色管理 >> 编辑角色</td>
+        <td class="navTd3"></td>
+    </tr>
+</table>
+<form th:action="@{../role/editRole}" th:object="${role}" method="post" onsubmit="return checkFrm()">
+    <table width="500" align="center" style="margin-top:30px" class="inputTable">
+        <tr>
+            <th>角色名称：</th>
+            <td>
+                <input class="text" name="name" th:value="${role.name}"/>
+                <input type="hidden" name="id" th:value="${role.id}"/>
+            </td>
+        </tr>
+        <tr>
+            <th>角色说明：</th>
+            <td><textarea class="text" name="remark" style="width:300px;height:46px"
+                          th:text="${role.remark}"></textarea></td>
+        </tr>
+        <tr>
+            <th>状态：</th>
+            <td th:if="${role.ROLE_STATUS_ENABLE eq 1}">
+                <input type="radio" th:field="*{status}" th:value="1" checked="checked"/>启用
+                <input type="radio" th:field="*{status}" th:value="2"/>禁用
+            </td>
+            <td th:if="${role.ROLE_STATUS_ENABLE eq 2}">
+                <input type="radio" th:field="*{status}" th:value="1"/>启用
+                <input type="radio" th:field="*{status}" th:value="2" checked="checked"/>禁用
+            </td>
+        </tr>
+    </table>
+    <table border="0" width="500" align="center" style="margin-top:20px">
+        <tr>
+            <td align="center">
+                <input type="submit" class="btn ok" value="确定"/>
+                <input type="button" class="btn cancel" value="取消" onclick="location='../role/roleList'"/>
+            </td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>

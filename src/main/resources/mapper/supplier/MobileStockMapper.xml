@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctsig.mobilescm.dao.supplier.MobileStockDao">
+
+    <resultMap type="MobileStorage" id="msResult">
+        <id property="id" column="id"/>
+        <result property="color" column="color"/>
+        <result property="config" column="config"/>
+        <result property="buyPrice" column="buyPrice"/>
+        <result property="amount" column="amount"/>
+        <result property="totalMoney" column="totalMoney"/>
+        <result property="remark" column="remark"/>
+        <result property="inputDate" column="inputDate"/>
+        <result property="inputUserId" column="inputUserId"/>
+        <result property="inputUserName" column="inputUserName"/>
+        <result property="checkDate" column="checkDate"/>
+        <result property="checkUserId" column="checkUserId"/>
+        <result property="checkUserName" column="checkUserName"/>
+        <result property="status" column="status"/>
+
+        <association property="supplier" column="supplierId" javaType="Supplier">
+            <id property="id" column="sup_id"/>
+            <result property="name" column="sup_name"/>
+        </association>
+        <association property="mobileType" column="mobileTypeId" javaType="MobileType">
+            <id property="id" column="mt_id"/>
+            <result property="name" column="mt_name"/>
+        </association>
+        <association property="department" column="departmentId" javaType="Department">
+            <id property="id" column="dt_id"/>
+            <result property="name" column="dt_name"/>
+        </association>
+    </resultMap>
+
+    <select id="queryList" resultMap="msResult">
+        SELECT
+        ms.*,
+        sup.id AS sup_id,
+        sup.name AS sup_name,
+        mt.id AS mt_id,
+        mt.name AS mt_name,
+        dt.id AS dt_id,
+        dt.name AS dt_name,
+        e1.name AS inputUserName,
+        e2.name AS checkUserName
+        FROM supplier_mobileStorage ms
+        LEFT JOIN basic_supplier sup ON ms.supplierId=sup.id
+        LEFT JOIN basic_mobileType mt ON ms.mobileTypeId=mt.id
+        LEFT JOIN department dt ON ms.departmentId=dt.id
+        LEFT JOIN employee e1 ON ms.inputUserId=e1.userId
+        LEFT JOIN employee e2 ON ms.checkUserId=e2.userId
+        <where>
+            <if test="id != null">
+                ms.id=#{id}
+            </if>
+            <if test="supplierId != null">
+                AND ms.supplierId=#{supplierId}
+            </if>
+            <if test="supplierTypeId != null">
+                AND ms.supplierId IN (SELECT id FROM basic_supplier WHERE supplierTypeId=#{supplierTypeId})
+            </if>
+            <if test="mobileTypeId != null">
+                AND ms.mobileTypeId=#{mobileTypeId}
+            </if>
+            <if test="brand != null">
+                AND ms.mobileTypeId IN (SELECT id FROM basic_mobileType WHERE brand=#{brand})
+            </if>
+            <if test="startDate != null">
+                AND ms.inputDate BETWEEN #{startDate} AND #{endDate}
+            </if>
+            <if test="queryScopeList != null">
+                AND ms.departmentId IN
+                <foreach open="(" close=")" separator="," collection="queryScopeList" item="departmentId">
+                    #{departmentId}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY ms.inputDate DESC
+        <if test="start != null">
+            LIMIT #{start},#{size}
+        </if>
+    </select>
+
+    <select id="queryCount" resultType="int">
+        SELECT COUNT(id) FROM supplier_mobileStorage ms
+        <where>
+            <if test="supplierId != null">
+                AND ms.supplierId=#{supplierId}
+            </if>
+            <if test="supplierTypeId != null">
+                AND ms.supplierId IN (SELECT id FROM basic_supplier WHERE supplierTypeId=#{supplierTypeId})
+            </if>
+            <if test="mobileTypeId != null">
+                AND ms.mobileTypeId=#{mobileTypeId}
+            </if>
+            <if test="brand != null">
+                AND ms.mobileTypeId IN (SELECT id FROM basic_mobileType WHERE brand=#{brand})
+            </if>
+            <if test="startDate != null">
+                AND ms.inputDate BETWEEN #{startDate} AND #{endDate}
+            </if>
+            <if test="queryScopeList != null">
+                AND ms.departmentId IN
+                <foreach open="(" close=")" separator="," collection="queryScopeList" item="departmentId">
+                    #{departmentId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="querySerialNumberList" resultType="java.util.HashMap">
+        SELECT numberOne,numberTwo FROM supplier_serialNumber
+        <where>
+            <if test="mobileStorageId != null">
+                mobileStorageId=#{mobileStorageId}
+            </if>
+        </where>
+    </select>
+
+    <select id="querySerialNumber" resultType="int">
+        SELECT COUNT(id) FROM supplier_serialNumber
+        <where>
+            <choose>
+                <when test="numberOne != null">
+                    numberOne=#{numberOne}
+                </when>
+                <otherwise>
+                    numberTwo=#{numberTwo}
+                </otherwise>
+            </choose>
+        </where>
+
+    </select>
+
+    <insert id="add">
+        INSERT INTO stock_mobilestock VALUES
+        <foreach separator="," item="msk" collection="mobileStockList">
+            (
+            #{msk.numberOne},#{msk.numberTwo},#{msk.mobileStorageId},#{msk.mobileType.id},#{msk.color},#{msk.config},#{msk.firstSupplier.id},
+            #{msk.firstStockDate},null,null,#{msk.buyPrice},#{msk.cost},#{msk.lossAmount},#{msk.department.id},#{msk.status}
+            )
+        </foreach>
+    </insert>
+
+    <update id="edit">
+        UPDATE stock_mobilestock
+        <set>
+            <if test="params.status != null">status=#{params.status},</if>
+        </set>
+        <where>
+            <if test="params.mobileStorageId != null">
+                AND mobileStorageId=#{params.mobileStorageId}
+            </if>
+            <if test="params.snList != null">
+                AND numberOne IN
+                <foreach open="(" close=")" separator="," collection="params.snList" item="sn">
+                    #{sn}
+                </foreach>
+            </if>
+        </where>
+    </update>
+
+    <delete id="delete">
+        DELETE FROM stock_mobileStock
+        <where>
+            <if test="params.mobileReturnId != null">
+                numberOne IN (SELECT numberOne FROM supplier_mobileReturnNumber WHERE
+                mobileReturnId=#{params.mobileReturnId})
+            </if>
+        </where>
+    </delete>
+
+
+</mapper> 

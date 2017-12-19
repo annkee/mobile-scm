@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctsig.mobilescm.dao.basic.AccessoryTypeDao">
+	
+	<select id="queryList" resultType="AccessoryType">
+		SELECT * FROM basic_accessoryType 
+		<where>
+			<if test="param.id != null">
+				AND id=#{param.id}
+			</if>
+			<if test="param.name != null">
+				AND name LIKE #{param.name}
+			</if>
+			<if test="param.brand != null">
+				AND brand=#{param.brand}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="add">
+		INSERT INTO basic_accessoryType VALUES(#{accessoryType.id},#{accessoryType.name},#{accessoryType.unit},#{accessoryType.specification},
+		#{accessoryType.produceFactory},#{accessoryType.remark},#{accessoryType.brand})
+	</insert>
+	
+	<update id="edit">
+		UPDATE basic_accessoryType SET name=#{accessoryType.name},unit=#{accessoryType.unit},specification=#{accessoryType.specification},
+		produceFactory=#{accessoryType.produceFactory},remark=#{accessoryType.remark},brand=#{accessoryType.brand} WHERE id=#{accessoryType.id}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM basic_accessoryType WHERE id=#{accessoryType.id}
+	</delete>
+	
+	
+</mapper> 

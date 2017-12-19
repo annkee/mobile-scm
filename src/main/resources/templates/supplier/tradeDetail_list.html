@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>入库单列表</title>
+    <link th:href="@{../default/css/page.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/table.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/input.css}" rel="stylesheet"/>
+    <link th:href="@{../jquery_ui/blue2.css}" rel="stylesheet"/>
+    <script th:src="@{../js/common/jquery.js}"/>
+    <script th:src="@{../js/common/common.js}"/>
+    <script th:src="@{../js/common/tree.js}"/>
+    <script th:src="@{../js/common/init.js}"/>
+    <script th:src="@{../js/common/json2.js}"/>
+    <script th:src="@{../js/common/relate.js}"/>
+
+    <script th:src="@{../jquery_ui/jui.js}"/>
+    <script th:src="@{../jquery_ui/ui.datepicker-zh-CN.js}"/>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("input[name=startDate]").datepicker();
+            $("input[name=endDate]").datepicker();
+
+            $("#supplierTypeId").relate($("#supplierId"), true);
+//            $("#brand").relate($("#mobileTypeId"), true);
+
+        });
+        function exportExcel() {
+
+        }
+    </script>
+</head>
+
+<body>
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="90%">
+    <tr>
+        <td class="navTd1"></td>
+        <td class="navTd2">供应商业务 >>　手机入库 >> 入库单列表</td>
+        <td class="navTd3"></td>
+    </tr>
+</table>
+<form action="../tradeDetail/list" th:object="${tradeDetail}" method="post">
+    <table border="0" width="90%" align="center" style="margin-top:10px">
+        <tr>
+            <td>开始时间</td>
+            <td><input class="text" style="width:80px" name="startDate" th:value="${startDate}" readonly="readonly"/>
+            </td>
+            <td>结束时间</td>
+            <td><input class="text" style="width:80px" name="endDate" th:value="${endDate}" readonly="readonly"/></td>
+            <td colspan="5">
+                <input id="exportExcel" type="hidden" name="show" value="export" disabled="disabled"/>
+            </td>
+            <td rowspan="2" align="right">
+                <input type="submit" class="btn find" value="查询"/>
+                <input type="submit" name="show" class="btn ok" style="width:90px" value="导出Excel"/>
+            </td>
+        </tr>
+        <tr>
+            <td>供应商类别</td>
+            <td>
+                <select id="supplierTypeId" name="supplier.supplierType.id" class="text" style="width:80px">
+                    <option value="">--不限--</option>
+                    <option th:each="supType : ${supplierTypeList}" th:value="${supType.id}"
+                            th:text="${supType.name}"></option>
+                </select>
+            </td>
+            <td>供应商</td>
+            <td>
+                <select id="supplierId" name="supplier.id" class="text" style="width:80px">
+                    <option value="">--不限--</option>
+                    <option th:each="sup : ${supplierList}" th:primaryKey="${sup.supplierType.id}" th:value="${sup.id}"
+                            th:text="${sup.name}"></option>
+                </select>
+            </td>
+            <td>交易类别</td>
+            <td>
+                <select name="tradeType" class="text" style="width:80px">
+                    <!--77标记默认值，防止请求400-->
+                    <option value="77">--不限--</option>
+                    <option th:each="tt : ${tradeTypeMap}" th:value="${tt.key}" th:text="${tt.value}"></option>
+                </select>
+            </td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+</form>
+<table class="table" rowNum="15" width="90%" align="center">
+    <tr>
+        <th>交易单号</th>
+        <th>供应商</th>
+        <th>型号编号</th>
+        <th>交易类型</th>
+        <th>单价</th>
+        <th>数量</th>
+        <th>总金额</th>
+        <th>录入人</th>
+        <th>审核人</th>
+        <th>状态</th>
+        <th>备注</th>
+        <th>机构</th>
+    </tr>
+    <tr th:each="td : ${tradeDetailList}">
+        <td th:text="${td.id}"></td>
+        <td th:text="${td.supplier.name }"></td>
+        <td th:text="${td.typeId}"></td>
+        <td th:text="${td.tradeTypeName}"></td>
+        <td th:text="${td.unitPrice}"></td>
+        <td th:text="${td.amount}"></td>
+        <td th:text="${td.totalMoney}"></td>
+        <td th:text="${td.inputUserName}"></td>
+        <td th:text="${td.checkUserName}"></td>
+        <td th:text="${td.statusName}"></td>
+        <td th:text="${td.remark}"></td>
+        <td th:text="${td.department.name}"></td>
+    </tr>
+</table>
+</body>
+</html>

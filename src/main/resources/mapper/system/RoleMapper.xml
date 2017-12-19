@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctsig.mobilescm.dao.system.RoleDao">
+	
+	<resultMap type="com.ctsig.mobilescm.domain.system.Role" id="roleResult">
+		<id property="id" column="id"/>
+		
+	</resultMap>
+	
+	<select id="getRole" parameterType="Role" resultType="Role">
+		SELECT * FROM sys_role WHERE id=#{role.id}
+	</select>
+	
+	<select id="getRoleList" parameterType="map" resultMap="roleResult">
+		SELECT * FROM sys_role 
+		<where>
+			<if test="param.status != null">
+				AND status IN
+				<foreach collection="param.status" open="(" close=")" separator="," item="s">
+					#{s}
+				</foreach>
+			</if>
+			<if test="param.name != null">
+				AND name LIKE #{param.name}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="addRole" parameterType="Role">
+		INSERT INTO sys_role VALUES(#{role.id},#{role.name},#{role.status},#{role.remark})
+	</insert>
+
+	<update id="editRole" parameterType="Role">
+		UPDATE sys_role
+		<set>
+			<if test="role.name != null">name=#{role.name},</if>
+			<if test="role.status != null">status=#{role.status},</if>
+			<if test="role.remark != null">remark=#{role.remark}</if>
+		</set>
+		WHERE id=#{role.id}
+	</update>
+	
+	
+	<select id="getRolePrivilege" parameterType="map" resultType="java.util.HashMap">
+		SELECT * FROM ${param.table} WHERE roleId=#{param.roleId}
+	</select>
+		
+	<delete id="deleteRolePrivilege" parameterType="map">
+		DELETE FROM ${param.table} WHERE roleId=#{param.roleId}
+	</delete>
+	
+	<insert id="addRolePrivilegeBatch" parameterType="map">
+		INSERT INTO ${param.table} VALUES
+		<foreach collection="param.pMap" index="key" item="value" separator=",">
+			(#{key},#{param.roleId},#{value})
+		</foreach>
+	</insert>
+	
+	<select id="selectRoleForUser" resultMap="roleResult">
+		SELECT * FROM sys_role WHERE id IN (SELECT roleId FROM sys_role_user WHERE userId=#{userId})
+	</select>	
+
+	<!--使用了@param注解这里的<foreach>的collection使用参数名-->
+	<select id="getUserActionList" resultType="java.lang.String">
+		SELECT 
+			a.name
+		FROM sys_action a
+		WHERE a.id IN 
+		(SELECT actionId FROM sys_role_action WHERE roleId IN 
+			<foreach collection="roleIdList" open="(" close=")" separator="," item="roleId">
+				#{roleId}
+			</foreach>
+		)
+	</select>
+	
+</mapper> 

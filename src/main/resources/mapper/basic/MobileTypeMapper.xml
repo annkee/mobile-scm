@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctsig.mobilescm.dao.basic.MobileTypeDao">
+	
+	<resultMap type="MobileType" id="mtResult">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="buyPrice" column="buyPrice"/>
+		<result property="remark" column="remark"/>
+		<result property="brand" column="brand"/>
+		<result property="config" column="config"/>
+		
+		<collection property="mobileBonusList" column="id" select="queryBonus"></collection>
+	</resultMap>
+	
+	<select id="queryList" resultType="MobileType">
+		SELECT * FROM basic_mobileType 
+		<where>
+			<if test="params.id != null">id=#{params.id}</if>
+			<if test="params.brand != null">AND brand=#{params.brand}</if>
+			<if test="params.name != null">AND name LIKE #{params.name}</if>
+		</where>
+		<if test="params.start != null">
+			LIMIT #{params.start},#{params.size}
+		</if>
+	</select>
+	
+	<select id="queryCount" resultType="int">
+		SELECT COUNT(id) FROM basic_mobileType
+		<where>
+			<if test="params.brand != null">AND brand=#{params.brand}</if>
+			<if test="params.name != null">AND name LIKE #{params.name}</if>
+		</where>
+	</select>
+	
+	<select id="queryObject" resultMap="mtResult">
+		SELECT * FROM basic_mobileType WHERE id=#{params.id}
+	</select>
+	
+	<select id="queryBonus" resultType="java.util.Map">
+		SELECT
+			mb.bonusPrice AS bonusPrice,
+			mb.bonusTypeId AS bonusTypeId,
+			bt.name AS bonusTypeName
+		FROM basic_mobileBonus mb
+		LEFT JOIN basic_bonusType bt ON mb.bonusTypeId=bt.id
+		WHERE mb.mobileTypeId=#{id}
+	</select>
+	
+	<insert id="add">
+		INSERT INTO basic_mobileType VALUES(#{mobileType.id},#{mobileType.name},#{mobileType.buyPrice},#{mobileType.remark},#{mobileType.brand},#{mobileType.config})
+	</insert>
+	
+	<insert id="addBonus">
+		INSERT INTO basic_mobileBonus VALUES(#{bonus.id},#{bonus.bonusPrice},#{bonus.mobileTypeId},#{bonus.bonusTypeId})
+	</insert>
+	
+	<update id="edit">
+		UPDATE basic_mobileType SET name=#{mobileType.name},buyPrice=#{mobileType.buyPrice},remark=#{mobileType.remark},brand=#{mobileType.brand},config=#{mobileType.config} WHERE id=#{mobileType.id}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM basic_mobileType WHERE id=#{mobileType.id}
+	</delete>
+	
+	<delete id="deleteBonus">
+		DELETE FROM basic_mobileBonus WHERE mobileTypeId=#{mobileType.id}
+	</delete>
+	
+</mapper> 

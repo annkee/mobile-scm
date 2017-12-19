@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctsig.mobilescm.dao.basic.SupplierDao">
+	
+	<resultMap type="Supplier" id="supplierResult">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="linkMan" column="linkMan"/>
+		<result property="phone" column="phone"/>
+		<result property="email" column="email"/>
+		<result property="address" column="address"/>
+		<result property="remark" column="remark"/>
+				
+		<association property="supplierType" javaType="SupplierType">
+			<id property="id" column="st_id"/>
+			<result property="name" column="st_name"/>
+			<result property="remark" column="st_remark"/>
+		</association>
+	</resultMap>
+	
+	<select id="queryList" resultMap="supplierResult">
+		SELECT
+		s.*,
+		st.id AS st_id,
+		st.name AS st_name,
+		st.remark AS st_remark
+		FROM basic_supplier s
+		LEFT JOIN basic_supplierType st
+		ON s.supplierTypeId=st.id
+		<where>
+			<if test="params.supplierTypeId != null">
+				AND s.supplierTypeId=#{params.supplierTypeId}
+			</if>
+			<if test="params.name != null">
+				AND s.name LIKE #{params.name}
+			</if>
+			<if test="params.id != null">
+				AND s.id=#{params.id}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="add">
+		INSERT INTO basic_supplier VALUES(#{supplier.id},#{supplier.name},#{supplier.linkMan},#{supplier.phone},#{supplier.email},
+		#{supplier.address},#{supplier.remark},#{supplier.supplierType.id})
+	</insert>
+	
+	<update id="edit">
+		UPDATE basic_supplier 
+		<set>
+			<if test="params.supplier != null">
+				name=#{supplier.name},linkMan=#{params.supplier.linkMan},phone=#{params.supplier.phone},
+				email=#{params.supplier.email},address=#{params.supplier.address},remark=#{params.supplier.remark},
+				supplierTypeId=#{params.supplier.supplierType.id}
+			</if>
+			<if test="supplierTypeIdKey != null">supplierTypeId=NULL</if>
+		</set>
+		<where>
+			<if test="params.supplier != null">
+				id=#{params.supplier.id}
+			</if>
+			<if test="supplierTypeIdKey != null">
+				supplierTypeId=#{supplierTypeIdKey}
+			</if>
+		</where>
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM basic_supplier WHERE id=#{supplier.id}
+	</delete>
+	
+	
+</mapper> 

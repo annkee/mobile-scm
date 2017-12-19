@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>部门列表</title>
+    <link th:href="@{../default/css/page.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/table.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/input.css}" rel="stylesheet"/>
+    <script th:src="@{../js/common/jquery.js}"/>
+    <script th:src="@{../js/common/common.js}"/>
+    <script th:src="@{../js/common/tree.js}"/>
+    <script th:src="@{../js/common/init.js}"/>
+    <script th:src="@{../js/common/json2.js}"/>
+    <script th:src="@{../js/common/relate.js}"/>
+</head>
+
+<body>
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="90%">
+    <tr>
+        <td class="navTd1"></td>
+        <td class="navTd2">基础设置 >>　部门管理 >> 部门列表</td>
+        <td class="navTd3"></td>
+    </tr>
+</table>
+<form action="../basic/listDepartment" th:object="${department}" method="post">
+    <table border="0" width="90%" align="center" style="margin-top:10px">
+        <tr>
+            <td width="60" align="left">部门名称:</td>
+            <td width="180" align="left"><input name="name" class="text" th:value="${department.name}"/></td>
+            <td width="60" align="left">部门地址:</td>
+            <td width="180" align="left"><input name="address" class="text" th:value="${department.address}"/></td>
+
+            <td align="right">
+                <input type="submit" class="btn find" value="查询"/>
+                <input type="button" class="btn ok" style="width:90px" value="添加部门"
+                       onclick="location='../basic/toAddDeptView'"/>
+            </td>
+        </tr>
+    </table>
+</form>
+<table class="table" rowNum="15" width="90%" align="center">
+    <tr>
+        <th>部门名称</th>
+        <th>地址</th>
+        <th>电话</th>
+        <th>联系人</th>
+        <th>备注</th>
+        <th>操作</th>
+    </tr>
+    <tr th:each="dept : ${departmentList}">
+        <td th:text="${dept.name}"></td>
+        <td th:text="${dept.address}"></td>
+        <td th:text="${dept.phone}"></td>
+        <td th:text="${dept.linkman}"></td>
+        <td th:text="${dept.remark}"></td>
+        <td>
+            <a th:href="'../basic/toEditDeptView?id='+${dept.id}">编辑</a>
+            <a th:href="'../basic/deleteDept?id='+${dept.id}" onclick="return confirm('确定要删除吗？');">删除</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

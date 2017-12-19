@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctsig.mobilescm.dao.basic.BonusTypeDao">
+	
+	<select id="queryList" resultType="BonusType">
+		SELECT * FROM basic_bonusType 
+		<where>
+			<if test="bonusType != null">
+				id=#{bonusType.id}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="add">
+		INSERT INTO basic_bonusType VALUES(#{bonusType.id},#{bonusType.name},#{bonusType.remark})
+	</insert>
+	
+	<update id="edit">
+		UPDATE basic_bonusType SET name=#{bonusType.name},remark=#{bonusType.remark} WHERE id=#{bonusType.id}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM basic_bonusType WHERE id=#{bonusType.id}
+	</delete>
+	
+	
+</mapper> 

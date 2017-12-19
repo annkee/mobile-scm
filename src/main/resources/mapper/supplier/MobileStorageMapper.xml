@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctsig.mobilescm.dao.supplier.MobileStorageDao">
+
+    <resultMap type="MobileStorage" id="msResult">
+        <id property="id" column="id"/>
+        <result property="numberOne" column="numberOne"/>
+        <result property="numberTwo" column="numberTwo"/>
+        <result property="color" column="color"/>
+        <result property="config" column="config"/>
+        <result property="buyPrice" column="buyPrice"/>
+        <result property="amount" column="amount"/>
+        <result property="totalMoney" column="totalMoney"/>
+        <result property="remark" column="remark"/>
+        <result property="inputDate" column="inputDate"/>
+        <result property="inputUserId" column="inputUserId"/>
+        <result property="inputUserName" column="inputUserName"/>
+        <result property="checkDate" column="checkDate"/>
+        <result property="checkUserId" column="checkUserId"/>
+        <result property="checkUserName" column="checkUserName"/>
+        <result property="status" column="status"/>
+
+        <association property="supplier" column="supplierId" javaType="Supplier">
+            <id property="id" column="sup_id"/>
+            <result property="name" column="sup_name"/>
+        </association>
+        <association property="mobileType" column="mobileTypeId" javaType="MobileType">
+            <id property="id" column="mt_id"/>
+            <result property="name" column="mt_name"/>
+        </association>
+        <association property="department" column="departmentId" javaType="Department">
+            <id property="id" column="dt_id"/>
+            <result property="name" column="dt_name"/>
+        </association>
+    </resultMap>
+
+    <resultMap type="MobileNumber" id="mnResult">
+        <id column="id" property="id"/>
+        <result column="numberOne" property="numberOne"/>
+        <result column="numberTwo" property="numberTwo"/>
+
+        <association column="mobileStorageId" property="mobileStorage" select="queryList"
+                     javaType="MobileStorage"></association>
+    </resultMap>
+
+    <select id="queryList" resultMap="msResult">
+        SELECT
+        ms.*,
+        <if test="params.numberOne != null">
+            sn.numberOne AS numberOne,
+            sn.numberTwo AS numberTwo,
+        </if>
+        sup.id AS sup_id,
+        sup.name AS sup_name,
+        mt.id AS mt_id,
+        mt.name AS mt_name,
+        dt.id AS dt_id,
+        dt.name AS dt_name,
+        e1.name AS inputUserName,
+        e2.name AS checkUserName
+        FROM supplier_mobileStorage ms
+        LEFT JOIN basic_supplier sup ON ms.supplierId=sup.id
+        LEFT JOIN basic_mobileType mt ON ms.mobileTypeId=mt.id
+        LEFT JOIN department dt ON ms.departmentId=dt.id
+        LEFT JOIN employee e1 ON ms.inputUserId=e1.userId
+        LEFT JOIN employee e2 ON ms.checkUserId=e2.userId
+        <if test="params.numberOne != null">
+            LEFT JOIN supplier_serialNumber sn ON ms.id=sn.mobileStorageId
+        </if>
+        <where>
+            <if test="params.id != null">
+                ms.id=#{params.id}
+            </if>
+            <if test="params.supplierId != null">
+                AND ms.supplierId=#{params.supplierId}
+            </if>
+            <if test="params.supplierTypeId != null">
+                AND ms.supplierId IN (SELECT id FROM basic_supplier WHERE supplierTypeId=#{params.supplierTypeId})
+            </if>
+            <if test="params.mobileTypeId != null">
+                AND ms.mobileTypeId=#{params.mobileTypeId}
+            </if>
+            <if test="params.brand != null">
+                AND ms.mobileTypeId IN (SELECT id FROM basic_mobileType WHERE brand=#{params.brand})
+            </if>
+            <if test="params.startDate != null">
+                AND ms.inputDate BETWEEN #{params.startDate} AND #{params.endDate}
+            </if>
+            <if test="params.queryScopeList != null">
+                AND ms.departmentId IN
+                <foreach open="(" close=")" separator="," collection="params.queryScopeList" item="departmentId">
+                    #{departmentId}
+                </foreach>
+            </if>
+            <if test="params.numberOne != null">
+                AND sn.numberOne=#{params.numberOne}
+            </if>
+        </where>
+        ORDER BY ms.inputDate DESC
+        <if test="params.start != null">
+            LIMIT #{params.start},#{params.size}
+        </if>
+    </select>
+
+    <select id="queryCount" resultType="int">
+        SELECT COUNT(id) FROM supplier_mobileStorage ms
+        <where>
+            <if test="params.supplierId != null">
+                AND ms.supplierId=#{params.supplierId}
+            </if>
+            <if test="params.supplierTypeId != null">
+                AND ms.supplierId IN (SELECT id FROM basic_supplier WHERE supplierTypeId=#{params.supplierTypeId})
+            </if>
+            <if test="params.mobileTypeId != null">
+                AND ms.mobileTypeId=#{params.mobileTypeId}
+            </if>
+            <if test="params.brand != null">
+                AND ms.mobileTypeId IN (SELECT id FROM basic_mobileType WHERE brand=#{params.brand})
+            </if>
+            <if test="params.startDate != null">
+                AND ms.inputDate BETWEEN #{params.startDate} AND #{params.endDate}
+            </if>
+            <if test="params.queryScopeList != null">
+                AND ms.departmentId IN
+                <foreach open="(" close=")" separator="," collection="params.queryScopeList" item="departmentId">
+                    #{departmentId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="querySerialNumberList" resultType="java.util.HashMap">
+        SELECT numberOne,numberTwo FROM supplier_serialNumber
+        <where>
+            <if test="params.mobileStorageId != null">
+                mobileStorageId=#{params.mobileStorageId}
+            </if>
+        </where>
+    </select>
+
+    <select id="querySerialNumber" resultType="int">
+        SELECT COUNT(id) FROM supplier_serialNumber
+        <where>
+            <choose>
+                <when test="params.numberOne != null">
+                    numberOne=#{params.numberOne}
+                </when>
+                <otherwise>
+                    numberTwo=#{params.numberTwo}
+                </otherwise>
+            </choose>
+        </where>
+
+    </select>
+
+    <insert id="add">
+		INSERT INTO supplier_mobileStorage VALUES
+		(
+			#{mobileStorage.id},#{mobileStorage.supplier.id},#{mobileStorage.mobileType.id}, #{mobileStorage.color},#{mobileStorage.config},
+			#{mobileStorage.buyPrice},#{mobileStorage.amount},
+			#{mobileStorage.totalMoney},#{mobileStorage.remark},#{mobileStorage.inputDate},#{mobileStorage.inputUserId},
+			null,null,#{mobileStorage.status},#{mobileStorage.department.id}
+		)
+	</insert>
+
+    <insert id="addSerialNumber">
+        INSERT INTO supplier_serialNumber VALUES
+        <foreach separator="," item="map" collection="list">
+            (#{map.id},#{map.mobileStorageId},#{map.numberOne},#{map.numberTwo})
+        </foreach>
+    </insert>
+
+    <update id="edit">
+        UPDATE supplier_mobileStorage
+        <set>
+            <if test="params.checkUserId != null">checkUserId=#{params.checkUserId},</if>
+            <if test="params.checkDate != null">checkDate=#{params.checkDate},</if>
+            <if test="params.status != null">status=#{params.status},</if>
+        </set>
+        <where>
+            <if test="params.id != null">
+                AND id=#{params.id}
+            </if>
+        </where>
+    </update>
+
+    <select id="queryMobileNumber" resultMap="mnResult">
+		SELECT * FROM supplier_serialNumber WHERE numberOne=#{params.numberOne}
+	</select>
+
+    <delete id="delete">
+        DELETE  FROM supplier_mobilestorage WHERE id=#{mobileStorageId};
+    </delete>
+</mapper> 

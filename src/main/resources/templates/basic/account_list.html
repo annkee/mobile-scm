@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>账户列表</title>
+    <link th:href="@{../default/css/page.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/table.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/input.css}" rel="stylesheet"/>
+    <script th:src="@{../js/common/jquery.js}"/>
+    <script th:src="@{../js/common/common.js}"/>
+    <script th:src="@{../js/common/tree.js}"/>
+    <script th:src="@{../js/common/init.js}"/>
+    <script th:src="@{../js/common/json2.js}"/>
+    <script th:src="@{../js/common/relate.js}"/>
+</head>
+
+<body>
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="90%">
+    <tr>
+        <td class="navTd1"></td>
+        <td class="navTd2">基础设置 >>　帐户管理 >> 帐户列表</td>
+        <td class="navTd3"></td>
+    </tr>
+</table>
+<form action="../account/list" th:object="${account}" method="post">
+    <table border="0" width="90%" align="center" style="margin-top:10px">
+        <tr>
+            <td>部门:</td>
+            <td>
+                <select class="text" name="department.id">
+                    <option value="">--全部类别--</option>
+                    <option th:each="dept : ${departmentList}" th:value="${dept.id}" th:text="${dept.name}"></option>
+                </select>
+            </td>
+            <td align="right">
+                <input type="submit" class="btn find" value="查询"/>
+                <input type="button" class="btn ok" style="width:90px" value="添加帐户"
+                       onclick="location='../account/toAdd'"/>
+            </td>
+        </tr>
+    </table>
+</form>
+<table class="table" rowNum="15" width="90%" align="center">
+    <tr>
+        <th>帐户名</th>
+        <th>余额</th>
+        <th>所属部门</th>
+        <th>备注</th>
+        <th>操作</th>
+    </tr>
+    <tr th:each="acc : ${accountList}">
+        <td th:text="${acc.name}"></td>
+        <td th:text="'￥'+${acc.balance}"></td>
+        <td th:text="${acc.department.name}"></td>
+        <td th:text="${acc.remark}"></td>
+        <td>
+            <a th:href="'../account/toEdit?accountId='+${acc.id}">编辑</a>
+            <a th:href="'../account/delete?accountId='+${acc.id}" onclick="return confirm('确定要删除吗？');">删除</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

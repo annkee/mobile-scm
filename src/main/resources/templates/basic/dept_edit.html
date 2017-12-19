@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html  xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>部门编辑</title>
+    <link th:href="@{../default/css/page.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/table.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/input.css}" rel="stylesheet"/>
+    <script th:src="@{../js/common/jquery.js}"/>
+    <script th:src="@{../js/common/common.js}"/>
+    <script th:src="@{../js/common/tree.js}"/>
+    <script th:src="@{../js/common/init.js}"/>
+    <script th:src="@{../js/common/json2.js}"/>
+    <script th:src="@{../js/common/relate.js}"/>
+    <script th:src="@{../js/system/dept.js}"/>
+  </head>
+  
+  <body>
+  <table border="0" cellspacing="0" cellpadding="0" align="center" width="90%">
+    <tr>
+      <td class="navTd1"></td>
+      <td class="navTd2">基础设置 >>　部门管理 >> 编辑部门</td>
+      <td class="navTd3"></td>
+    </tr>
+  </table>
+    <form action="../basic/editDept" th:object="${department}" method="post" onsubmit="return checkFrm();">
+      <table width="500" align="center" style="margin-top:30px" class="inputTable">
+        <tr>
+          <th>部门名称：</th>
+          <td><input class="text" name="name" th:value="${department.name}"/>
+            <input type="hidden" name="id" th:value="${department.id}" />
+          </td>
+        </tr>
+        <tr>
+          <th>联系人：</th>
+          <td><input class="text" name="linkman" th:value="${department.linkman}"/></td>
+        </tr>
+        <tr>
+          <th>电话：</th>
+          <td><input class="text" name="phone" th:value="${department.phone}"/></td>
+        </tr>
+        <tr>
+          <th>地址：</th>
+          <td><textarea class="text" name="address" style="width:300px;height:46px" th:text="${department.address}"></textarea></td>
+        </tr>
+        <tr>
+          <th>备注：</th>
+          <td><textarea class="text" name="remark" style="width:300px;height:46px" th:text="${department.remark}"></textarea></td>
+        </tr>       
+      </table>
+      <table border="0" width="500" align="center" style="margin-top:20px">
+        <tr><td align="center">
+          <input type="submit" class="btn ok" value="确定" />
+          <input type="button" class="btn cancel" value="取消" onclick="location='../basic/listDepartment'"/>
+        </td></tr>
+      </table>
+    </form>    
+  </body>
+</html>

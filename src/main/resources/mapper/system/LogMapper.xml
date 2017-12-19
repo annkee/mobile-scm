@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctsig.mobilescm.dao.system.LogDao">
+
+    <select id="getLogList" resultType="Log">
+        SELECT * FROM sys_log
+        <where>
+            <if test="beginDate != null">
+                AND DATE(operTime) BETWEEN #{beginDate} AND #{endDate}
+            </if>
+            <if test="userAccount != null">
+                AND account=#{userAccount}
+            </if>
+        </where>
+        ORDER BY operTime DESC
+        <if test="start != null">
+            LIMIT #{start},#{size}
+        </if>
+    </select>
+
+    <select id="getTotal" resultType="Integer">
+        SELECT COUNT(id) FROM sys_log
+        <where>
+            <if test="beginDate != null">
+                AND DATE(operTime) BETWEEN #{beginDate} AND #{endDate}
+            </if>
+            <if test="userAccount != null">
+                AND account=#{userAccount}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addLog">
+		INSERT INTO sys_log VALUES (#{id},#{actionName},#{parameter},#{account},#{operTime})
+	</insert>
+
+    <delete id="deleteLog">
+		<![CDATA[
+
+			DELETE FROM sys_log WHERE DATE(operTime) < #{date}
+
+        ]]>
+	</delete>
+
+</mapper> 

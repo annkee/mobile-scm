@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <title>退机单列表</title>
+    <link th:href="@{../default/css/page.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/table.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/input.css}" rel="stylesheet"/>
+    <link th:href="@{../jquery_ui/blue2.css}" rel="stylesheet"/>
+    <script th:src="@{../js/common/jquery.js}"/>
+    <script th:src="@{../js/common/common.js}"/>
+    <script th:src="@{../js/common/tree.js}"/>
+    <script th:src="@{../js/common/init.js}"/>
+    <script th:src="@{../js/common/json2.js}"/>
+    <script th:src="@{../js/common/relate.js}"/>
+    <script th:src="@{../jquery_ui/jui.js}"/>
+    <script th:src="@{../jquery_ui/ui.datepicker-zh-CN.js}"/>
+    <script type="text/javascript">
+        $().ready(function () {
+            $("input[name=startDate]").datepicker();
+            $("input[name=endDate]").datepicker();
+
+            $("#supplierTypeId").relate($("#supplierId"), true);
+            $("#brand").relate($("#mobileTypeId"), true);
+
+        });
+    </script>
+</head>
+
+<body>
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="90%">
+    <tr>
+        <td class="navTd1"></td>
+        <td class="navTd2">供应商业务 >>　手机退机 >> 退机单列表</td>
+        <td class="navTd3"></td>
+    </tr>
+</table>
+<form action="../mobileReturn/list" th:object="${mobileReturn}" method="post">
+    <table border="0" width="90%" align="center" style="margin-top:10px">
+        <tr>
+            <td>开始时间</td>
+            <td><input class="text" style="width:80px" name="startDate" th:value="${startDate}" readonly="readonly"/>
+            </td>
+            <td>结束时间</td>
+            <td><input class="text" style="width:80px" name="endDate" th:value="${endDate}" readonly="readonly"/></td>
+            <td colspan="5"></td>
+            <td rowspan="2" align="right">
+                <input type="submit" class="btn find" value="查询"/>
+                <input type="button" class="btn ok" style="width:90px" value="新建退机单"
+                       onclick="location='../mobileReturn/toAdd'"/>
+            </td>
+        </tr>
+        <tr>
+            <td>供应商类别</td>
+            <td>
+                <select id="supplierTypeId" name="supplier.supplierType.id" class="text"
+                        style="width:80px">
+                    <option value="">--不限--</option>
+                    <option th:each="supType:${supplierTypeList}" th:value="${supType.id}"
+                            th:text="${supType.name}"></option>
+                </select>
+            </td>
+            <td>供应商</td>
+            <td>
+                <select id="supplierId" name="mobileReturn.supplier.id" class="text" style="width:80px">
+                    <option value="">--不限--</option>
+                    <option th:each="sup:${supplierList}" th:primaryKey="${sup.supplierType.id}" th:value="${sup.id}"
+                            th:text="${sup.name}"></option>
+                </select>
+            </td>
+            <td>品牌</td>
+            <td>
+                <select id="brand" name="mobileType.brand" class="text" style="width:80px">
+                    <option value="">--不限--</option>
+                    <option th:each="brand:${brandList}" th:value="${brand.name}"
+                            th:text="${brand.name}"></option>
+                </select>
+            </td>
+            <td>手机型号</td>
+            <td>
+                <select id="mobileTypeId" name="mobileType.id" class="text" style="width:80px">
+                    <option value="">--不限--</option>
+                    <option th:each="mobType:${mobileTypeList}" th:primaryKey="${mobType.brand}"
+                            th:value="${mobType.id}"
+                            th:text="${mobType.name}"></option>
+                </select>
+            </td>
+        </tr>
+    </table>
+</form>
+<table class="table" rowNum="15" width="90%" align="center">
+    <tr>
+        <th>单据号码</th>
+        <th>供应商</th>
+        <th>机型</th>
+        <th>退货价</th>
+        <th>数量</th>
+        <th>金额</th>
+        <th>录入人</th>
+        <th>审核人</th>
+        <th>状态</th>
+        <th>备注</th>
+        <th>机构</th>
+        <th>操作</th>
+    </tr>
+    <tr th:each="mr:${page.dataList}">
+        <td th:text="${mr.id}"></td>
+        <td th:text="${mr.supplier.name }"></td>
+        <td th:text="${mr.mobileType.name}"></td>
+        <td th:text="${mr.returnPrice}"></td>
+        <td th:text="${mr.amount}"></td>
+        <td th:text="${mr.totalMoney}"></td>
+        <td th:text="${mr.inputUserName}"></td>
+        <td th:text="${mr.checkUserName}"></td>
+        <td th:text="${mr.statusName}"></td>
+        <td th:text="${mr.remark}"></td>
+        <td th:text="${mr.department.name}"></td>
+        <td>
+            <a href="#">详情</a>
+            <span th:if="${mr.status eq 0}">
+                <a href="#">修改</a>
+                <a th:href="'../mobileReturn/check?mobileReturnId='+${mr.id}">审核</a>
+
+            </span>
+
+            <span th:if="${mr.status ne 0}">
+                <span style="color:gray">修改</span>
+                <span style="color:gray">删除</span>
+                <span style="color:gray">审核</span>
+            </span>
+
+        </td>
+    </tr>
+</table>
+<input type="hidden" id="page" th:value="${page.pageCode}"/>
+</body>
+<script>
+    //    追加html分页代码
+    var pages = $("#page");
+    var data = pages.val();
+    pages.after(data);
+</script>
+</html>

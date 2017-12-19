@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>菜单管理</title>
+    <link th:href="@{../default/css/page.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/table.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/input.css}" rel="stylesheet"/>
+    <script th:src="@{../js/common/jquery.js}"/>
+    <script th:src="@{../js/common/common.js}"/>
+    <script th:src="@{../js/common/tree.js}"/>
+    <script th:src="@{../js/common/init.js}"/>
+    <script th:src="@{../js/common/json2.js}"/>
+    <script th:src="@{../js/common/relate.js}"/>
+
+    <script th:src="@{../js/dev/menu_manage.js}"/>
+    <!--进入了menu_manage.js loadTree()-->
+    <!--
+        1.<script>中获取后台数据 th:inline="javascript"
+        2. 隐藏域：input type="hidden" th:value="${data}" id="data">
+           js :  var data=${"#data"}.val() -->
+    <script th:inline="javascript">
+        var trueorfalse = [[${session.refreshTree}]];
+        $(function () {
+            if (trueorfalse == true) {
+                self.top.loadTree();
+            }
+        });
+    </script>
+</head>
+
+<body>
+<table width="98%" align="center" border="0">
+    <tr>
+        <td>当前菜单：<span style="font-weight:bold;color:#000099" th:text="${menu.name}"></span></td>
+    </tr>
+</table>
+<table width="98%" align="center" class="table">
+    <tr>
+        <th>菜单类型</th>
+        <th>菜单动作</th>
+        <th>说明</th>
+        <th>父菜单</th>
+        <th>操作</th>
+    </tr>
+    <tr>
+        <td th:text="${menu.typeName}"></td>
+        <td th:if="${menu.action}!=null" th:text="${menu.action.name}"></td>
+        <td th:if="${menu.action}==null" th:text="${menu.action}"></td>
+        <td th:text="${menu.remark}"></td>
+        <td>
+            <!--thymeleaf的 a 链接的传参-->
+            <a th:if="${session.parentMenu}!=null"
+               th:href="@{../menu/menuDetail(menuId=${session.parentMenu.id},menuType=${session.parentMenu.type})}"
+               th:text="${session.parentMenu.name}">
+            </a>
+        </td>
+        <td>
+            <a th:if="${menu.id!='root'}" th:href="@{../menu/toEditMenuView(menuId=${menu.id})}"
+               th:text="编辑"></a>
+            <a th:if="${menu.id!='root'}" th:href="@{../menu/deleteMenu(menuId=${menu.id})}"
+               onclick="return confirm('确定要删除吗？');" th:text="删除"></a>
+
+            <a th:if="${menu.type==1}" th:href="@{../menu/toAddMenuView(menuId=${menu.id})}"
+               th:text="添加子菜单"></a>
+
+            <a th:if="${menu.type==2}" th:href="@{../menu/toAddActionView(menuId=${menu.id})}"
+               th:text="添加动作"></a>
+        </td>
+    </tr>
+</table>
+<span th:if="${menu.type==1}">
+    <table width="98%" align="center" border="0" style="margin-top:15px">
+        <tr>
+            <td>子菜单列表：</td>
+        </tr>
+    </table>
+    <table width="98%" align="center" class="table">
+        <tr>
+            <th>菜单名称</th>
+            <th>菜单类型</th>
+            <th>菜单动作</th>
+            <th>说明</th>
+            <th>操作</th>
+        </tr>
+            <tr th:each="subMenu,status : ${subMenuList}">
+                <td>
+                    <a th:href="@{../menu/menuDetail(menuId=${subMenu.id},menuType=${subMenu.type})}"
+                       th:text="${subMenu.name}"></a>
+                </td>
+                <td th:text="${subMenu.typeName}"></td>
+                <td th:if="${subMenu.action}!=null" th:text="${subMenu.action.name}"></td>
+                <td th:if="${subMenu.action}==null" th:text="${subMenu.action}"></td>
+                <td th:text="${subMenu.remark}"></td>
+                <td>
+                    <span th:if="${status.first}==true">
+                        <span style="color: silver">上移</span>
+                        <a th:href="@{../menu/moveDown(menuId=${subMenu.id},menuParentId=${subMenu.parentId},menuSortOrder=${subMenu.sortOrder})}"
+                           th:text="下移"></a>
+                    </span>
+
+                    <span th:if="${status.last}==true">
+                        <a th:href="@{../menu/moveUp(menuId=${subMenu.id},menuParentId=${subMenu.parentId},menuSortOrder=${subMenu.sortOrder})}"
+                           th:text="上移"></a>
+                        <span style="color: silver">下移</span>
+                    </span>
+                     <span th:unless="${status.first}==true or ${status.last}==true">
+                        <a th:href="@{../menu/moveUp(menuId=${subMenu.id},menuParentId=${subMenu.parentId},menuSortOrder=${subMenu.sortOrder})}"
+                           th:text="上移"></a>
+                        <a th:href="@{../menu/moveDown(menuId=${subMenu.id},menuParentId=${subMenu.parentId},menuSortOrder=${subMenu.sortOrder})}"
+                           th:text="下移"></a>
+                     </span>
+                </td>
+            </tr>
+    </table>
+</span>
+<span th:if="${menu.type==2}">
+
+    <table width="98%" align="center" border="0" style="margin-top:15px">
+        <tr>
+            <td>普通动作列表：</td>
+        </tr>
+    </table>
+    <table width="98%" align="center" class="table">
+        <tr>
+            <th>动作名称</th>
+            <th>动作类型</th>
+            <th>说明</th>
+            <th>操作</th>
+        </tr>
+            <tr th:each="normalAction : ${normalActionList}">
+                <td th:text="${normalAction.name}"></td>
+                <td th:text="普通动作"></td>
+                <td th:text="${normalAction.remark}"></td>
+                <td>
+                    <a th:href="@{../menu/toEditActionView(actionId=${normalAction.id},menuId=${menu.id})}"
+                       th:text="编辑"></a>
+                    <a th:href="@{../menu/deleteAction(actionId=${normalAction.id},menuId=${menu.id})}"
+                       th:text="删除" onclick="return confirm('确定要删除吗？');"></a>
+                </td>
+            </tr>
+    </table>
+    <table width="98%" align="center" border="0" style="margin-top:15px">
+        <tr>
+            <td>授权动作列表：</td>
+        </tr>
+    </table>
+    <table width="98%" align="center" class="table">
+        <tr>
+            <th>动作名称</th>
+            <th>动作类型</th>
+            <th>说明</th>
+            <th>操作</th>
+        </tr>
+             <tr th:each="authorAction : ${authorActionList}">
+                <td th:text="${authorAction.name}"></td>
+                <td th:text="授权动作"></td>
+                <td th:text="${authorAction.remark}"></td>
+                <td>
+                    <a th:href="@{../menu/toEditActionView(actionId=${authorAction.id})}"
+                       th:text="编辑"></a>
+                    <a th:href="@{../menu/deleteAction(actionId=${authorAction.id})}"
+                       th:text="删除" onclick="return confirm('确定要删除吗？');"></a>
+                </td>
+            </tr>
+    </table>
+
+</span>
+</body>
+</html>

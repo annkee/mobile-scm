@@ -1,0 +1,160 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>新建退货单</title>
+    <link th:href="@{../default/css/page.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/table.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/input.css}" rel="stylesheet"/>
+    <script th:src="@{../js/common/jquery.js}"/>
+    <script th:src="@{../js/common/common.js}"/>
+    <script th:src="@{../js/common/tree.js}"/>
+    <script th:src="@{../js/common/init.js}"/>
+    <script th:src="@{../js/common/json2.js}"/>
+    <script th:src="@{../js/common/relate.js}"/>
+    <script th:src="@{../js/sup/mobileReturn.js}"/>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#supplierTypeId").relate($("#supplierId"), false);
+            $("#brand").relate($("#mobileTypeId"), false);
+
+            //绑定keypress事件
+            $("input[name='sn1']").keypress(function (e) {
+                if (e.keyCode == 13) {
+                    addSerialNumber();
+                }
+            });
+
+            $("input[name='returnPrice']").blur(function () {
+                var returnPrice = this.value.trim();
+                $("input[name='totalMoney']").val(getOk() * returnPrice);
+            });
+
+            $("#supplierId, #mobileTypeId").change(function () {
+                setOrder();
+            });
+
+        });
+    </script>
+</head>
+
+<body>
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="90%">
+    <tr>
+        <td class="navTd1"></td>
+        <td class="navTd2">供应商业务 >>　手机退机 >> 新建退货单</td>
+        <td class="navTd3"></td>
+    </tr>
+</table>
+<form action="../mobileReturn/add" th:object="${mobileReturn}" method="post">
+    <table class="inputTable" width="90%" align="center" style="margin-top:10px">
+        <tr>
+            <th colspan="2">
+                新建手机退货单
+            </th>
+            <th>数量</th>
+            <th><input type="text" name="amount" value="0" class="text"
+                       style="width:100;border:none;background:none;font-weight:bold"
+                       maxlength="6" readonly="readonly"/>
+            </th>
+            <th>退货价</th>
+            <th><input type="text" name="returnPrice" class="text" style="width:100;"
+                       maxlength="6"/>
+            </th>
+            <th>总价</th>
+            <th><input name="totalMoney" readonly="readonly" class="text"
+                       style="width:80px;border:none;background:none;font-weight:bold" value="0"/></th>
+        </tr>
+        <tr>
+            <th>供应商类别</th>
+            <td>
+                <select id="supplierTypeId" class="text" style="width:100">
+                    <option value="">--不限--</option>
+                    <option th:each="st:${supplierTypeList}" th:value="${st.id}" th:text="${st.name}"></option>
+                </select>
+            </td>
+            <th>供应商</th>
+            <td>
+                <select id="supplierId" name="supplier.id" class="text" style="width:100">
+                    <option value="">--不限--</option>
+                    <option th:each="sup:${supplierList}" th:primaryKey="${sup.supplierType.id}" th:value="${sup.id}"
+                            th:text="${sup.name}">
+
+                    </option>
+                </select>
+            </td>
+            <th>品牌名称</th>
+            <td>
+                <select id="brand" class="text" style="width:100">
+                    <option value="">--不限--</option>
+                    <option th:each="brand:${brandList}" th:value="${brand.name}" th:text="${brand.name}"></option>
+                </select>
+            </td>
+            <th>机型</th>
+            <td>
+                <select id="mobileTypeId" name="mobileType.id" class="text" style="width:100">
+                    <option value="">--不限--</option>
+                    <option th:each="mobType:${mobileTypeList }" th:primaryKey="${mobType.brand}"
+                            th:value="${mobType.id}" th:text="${mobType.name}"></option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                备注
+            </th>
+            <td colspan="7">
+                <textarea rows="2" cols="82" name="remark"></textarea>
+            </td>
+        </tr>
+    </table>
+    <table id="tblSns" class="table" width="90%" align="center" style="margin-top:10px">
+        <tr>
+            <th align="center" width="50">
+                序号
+            </th>
+            <th>
+                串号一
+            </th>
+            <th>
+                串号二
+            </th>
+            <th>
+                供应商
+            </th>
+            <th>
+                机型
+            </th>
+            <th>
+                操作
+            </th>
+            <th>
+                状态
+            </th>
+        </tr>
+    </table>
+    <table align="center" width="90%" class="inputTable" style="border-top:none">
+        <tr>
+
+            <th width="50">
+                串号
+            </th>
+            <th width="220">
+                <input type="text" name="sn1" value="" class="text" maxlength="30"/>
+            </th>
+
+            <th align="left">
+                <input type="button" value="添加" class="btn ok" onclick="addSerialNumber();"/>
+            </th>
+        </tr>
+    </table>
+    <br/>
+    <div align="center">
+        <input type="submit" name="but1" value="保存" class="btn ok" onclick="return check();"/>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="button" name="but2" value="返回" class="btn cancel"
+               onclick="location='../mobileReturn/list'"/>
+    </div>
+</form>
+
+</body>
+</html>

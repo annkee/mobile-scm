@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctsig.mobilescm.dao.system.UserDao">
+
+    <resultMap id="userResult" type="com.ctsig.mobilescm.domain.system.User" >
+        <id property="id" column="id"/>
+        <result property="account" column="account"/>
+        <result property="status" column="status"/>
+        <result property="remark" column="remark"/>
+        <result property="createTime" column="createTime"/>
+        <result property="skin" column="skin"/>
+        <result property="queryScope" column="queryScope"/>
+
+        <association property="employee" column="employeeId" javaType="com.ctsig.mobilescm.domain.basic.Employee">
+            <id property="id" column="employee_id"/>
+            <result property="name" column="employee_name"/>
+        </association>
+
+        <collection property="roleList" column="id" ofType="Role"
+                    select="com.ctsig.mobilescm.dao.system.RoleDao.selectRoleForUser"/>
+    </resultMap>
+
+    <select id="login" parameterType="Map" resultType="User">
+		SELECT * FROM sys_user WHERE account=#{account} AND password=#{password} AND status=#{status}
+	</select>
+
+    <!-- 开启二级缓存 -->
+    <cache/>
+
+    <select id="getUserList" parameterType="java.util.Map" resultMap="userResult">
+        SELECT
+        u.*,
+        e.id AS employee_id,
+        e.name AS employee_name
+        FROM sys_user u
+        LEFT JOIN employee e ON u.employeeId=e.id
+        <where>
+            <if test="param.account != null">
+                AND account LIKE #{param.account}
+            </if>
+            <if test="param.loginAccount!=null">
+                AND u.account=#{param.loginAccount}
+            </if>
+            <if test="param.password!=null">
+                AND u.password=#{param.password}
+            </if>
+            <if test="param.status!=null">
+                AND u.status=#{param.status}
+            </if>
+            <if test="param.id != null">
+                AND u.id=#{param.id}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addUser">
+		INSERT INTO sys_user VALUES(#{user.id},#{user.account},#{user.password},#{user.status},#{user.remark},#{user.createTime},
+		#{user.skin},#{user.employee.id},#{user.queryScope})
+	</insert>
+
+    <insert id="addUserRole" parameterType="map">
+        INSERT INTO sys_role_user VALUES
+        <foreach collection="param.id_role" index="id" item="roleId" separator=",">
+            (#{id},#{roleId},#{param.userId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteUserRole">
+		DELETE FROM sys_role_user WHERE userId=#{param1}
+	</delete>
+
+    <delete id="deleteUser">
+		DELETE FROM sys_user WHERE id=#{param1}
+	</delete>
+
+    <update id="editUser" parameterType="User">
+        UPDATE sys_user
+        <set>
+            <if test="user.account != null">account=#{user.account},</if>
+            <if test="user.password != null">password=#{user.password},</if>
+            <if test="user.status != null">status=#{user.status},</if>
+            <if test="user.remark != null">remark=#{user.remark},</if>
+            <if test="user.queryScope != null">queryScope=#{user.queryScope}</if>
+        </set>
+        WHERE id=#{user.id}
+    </update>
+
+</mapper> 

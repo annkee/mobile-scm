@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctsig.mobilescm.dao.basic.AccountDao">
+	
+	<resultMap type="Account" id="accountResult">
+		<id property="id" column="id"/>
+		<result property="account" column="account"/>
+		<result property="name" column="name"/>
+		<result property="balance" column="balance"/>
+		<result property="remark" column="remark"/>
+		
+		<association property="department" column="departmentId" javaType="Department">
+			<id property="id" column="d_id"/>
+			<result property="name" column="d_name"/>
+		</association>
+	</resultMap>
+	
+	<select id="queryList" resultMap="accountResult">
+		SELECT 
+			a.*,
+			d.id AS d_id,
+			d.name AS d_name
+		FROM basic_account a
+		LEFT JOIN department d ON a.departmentId=d.id
+		<where>
+			<if test="param.id != null">
+				AND a.id=#{param.id}
+			</if>
+			<if test="param.departmentId != null">
+				AND a.departmentId=#{param.departmentId}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="add">
+		INSERT INTO basic_account VALUES(#{account.id},#{account.account},#{account.name},#{account.balance},#{account.remark},#{account.department.id})
+	</insert>
+	
+	<update id="edit">
+		UPDATE basic_account SET account=#{account.account},name=#{account.name},remark=#{account.remark},departmentId=#{account.department.id} WHERE id=#{account.id}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM basic_account WHERE id=#{account.id}
+	</delete>
+	
+	
+</mapper> 

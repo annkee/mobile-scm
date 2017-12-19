@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>用户编辑</title>
+    <link th:href="@{../default/css/page.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/table.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/input.css}" rel="stylesheet"/>
+    <script th:src="@{../js/common/jquery.js}"/>
+    <script th:src="@{../js/common/common.js}"/>
+    <script th:src="@{../js/common/tree.js}"/>
+    <script th:src="@{../js/common/init.js}"/>
+    <script th:src="@{../js/common/json2.js}"/>
+    <script th:src="@{../js/common/relate.js}"/>
+</head>
+
+<body>
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="500">
+    <tr>
+        <td class="navTd1"></td>
+        <td class="navTd2">系统管理 >>　帐号管理 >> 编辑帐号</td>
+        <td class="navTd3"></td>
+    </tr>
+</table>
+<form th:action="@{../user/editUser}" method="post" th:object="${user}" onsubmit="return checkBox()">
+    <table width="500" align="center" style="margin-top:30px" class="inputTable">
+        <tr>
+            <th>员工姓名：</th>
+            <td>
+                <span th:text="${user.employee.name}"></span>
+                <input type="hidden" name="id" th:value="${user.id}"/>
+            </td>
+        </tr>
+        <tr>
+            <th>帐号名称：</th>
+            <td><input class="text" name="account" th:value="${user.account}"/></td>
+        </tr>
+        <tr>
+            <th>备注：</th>
+            <td><textarea class="text" name="remark" style="width:300px;height:46px"
+                          th:text="${user.remark}"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <th>状态：</th>
+            <td th:if="${user.USER_STATUS_ENABLE eq 1}">
+                <input type="radio" th:field="*{status}" th:value="1" checked="checked"/>启用
+                <input type="radio" th:field="*{status}" th:value="2"/>禁用
+            </td>
+            <td th:if="${user.USER_STATUS_ENABLE eq 2}">
+                <input type="radio" th:field="*{status}" th:value="1"/>启用
+                <input type="radio" th:field="*{status}" th:value="2" checked="checked"/>禁用
+            </td>
+        </tr>
+        <tr>
+            <th>角色：</th>
+            <td>
+
+                <span th:each="role : ${roleList}">
+                    <input type="checkbox" name="roleIdList" th:value="${role.id}"/>
+                    <span th:text="${role.name}"></span>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <th>查询范围：</th>
+            <td >
+                <span th:each="department : ${departmentList}">
+                    <input type="checkbox" name="queryScopeList" th:value="${department.id}"/>
+                    <span th:text="${department.name}"></span>
+                </span>
+                <!--<my:checked items="${user.queryScopeList}" value="${department.id}"/>
+                />${department.name}-->
+            </td>
+        </tr>
+    </table>
+    <table border="0" width="500" align="center" style="margin-top:20px">
+        <tr>
+            <td align="center">
+                <input type="submit" class="btn ok" value="确定"/>
+                <input type="button" class="btn cancel" value="取消" onclick="location='../user/listUser'"/>
+            </td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>

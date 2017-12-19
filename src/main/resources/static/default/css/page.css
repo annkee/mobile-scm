@@ -1,0 +1,33 @@
+body {
+	font-size: 12px;
+	margin: 2px;
+}
+
+table {
+	font-size: 12px;
+	margin: 4px auto;
+}
+
+a {
+	text-decoration: none;
+	color: #333333;
+}
+
+a:hover {
+	color: #990000;
+}
+
+.navTd1{
+	height:28px;
+	width:18px;
+	background-image:url(../images/navigation_1.jpg);
+}
+.navTd2{
+	height:28px;
+	background-image:url(../images/navigation_2.jpg);
+}
+.navTd3{
+	height:28px;
+	width:9px;
+	background-image:url(../images/navigation_3.jpg);
+}

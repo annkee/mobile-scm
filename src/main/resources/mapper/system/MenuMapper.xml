@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctsig.mobilescm.dao.system.MenuDao">
+
+    <cache/>
+    <resultMap type="com.ctsig.mobilescm.domain.system.Menu" id="menuResult">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="parentId" column="parentId"/>
+        <result property="sortOrder" column="sortOrder"/>
+        <result property="remark" column="remark"/>
+        <!--两张表关联查询-->
+        <association property="action" column="actionId" javaType="com.ctsig.mobilescm.domain.system.Action">
+            <id property="id" column="action_id"/>
+            <result property="name" column="action_name"/>
+            <result property="type" column="action_type"/>
+            <result property="menuId" column="action_menuId"/>
+            <result property="remark" column="action_remark"/>
+        </association>
+    </resultMap>
+
+    <select id="getMenu" parameterType="com.ctsig.mobilescm.domain.system.Menu" resultMap="menuResult">
+		SELECT 
+			m.*, 
+			a.id as action_id,
+			a.name as action_name,
+			a.type as action_type,
+			a.menuId as action_menuId,
+			a.remark as action_remark
+		FROM sys_menu m LEFT OUTER JOIN sys_action a ON m.actionId=a.id
+		WHERE m.id=#{menu.id}
+	</select>
+
+    <select id="getMenuList" resultMap="menuResult" resultType="java.util.Map">
+        SELECT
+        m.*,
+        a.id as action_id,
+        a.name as action_name,
+        a.type as action_type,
+        a.menuId as action_menuId,
+        a.remark as action_remark
+        FROM sys_menu m LEFT OUTER JOIN sys_action a ON m.actionId=a.id
+        <where>
+            <if test="param.menu.type != null">
+                AND m.type = #{param.menu.type}
+            </if>
+            <if test="param.menu.parentId != null">
+                AND m.parentId = #{param.menu.parentId}
+            </if>
+            <if test="param.roleList!=null">
+                AND m.id IN (SELECT menuId FROM sys_role_menu WHERE roleId IN
+                <foreach item="role" open="(" close=")" separator="," collection="param.roleList">
+                    #{role.id}
+                </foreach>
+                )
+            </if>
+            <if test="param.menu.sortOrder != null">
+                AND m.sortOrder > #{param.menu.sortOrder}
+            </if>
+            ORDER BY m.sortOrder
+        </where>
+    </select>
+
+    <insert id="addMenu" parameterType="Menu">
+		INSERT INTO sys_menu(id,name,type,parentId,sortOrder,remark,actionId) 
+			VALUES(#{menu.id},#{menu.name},#{menu.type},#{menu.parentId},#{menu.sortOrder},#{menu.remark},#{menu.action.id})
+	</insert>
+
+    <select id="getMaxSortOrder" resultType="java.lang.Integer">
+		SELECT MAX(sortOrder) FROM sys_menu WHERE parentId=#{param.parentId}
+	</select>
+
+    <update id="editMenu" parameterType="Menu">
+        UPDATE sys_menu
+        <set>
+            <if test="menu.name != null">name=#{menu.name},</if>
+            <if test="menu.remark != null">remark=#{menu.remark},</if>
+            <if test="menu.sortOrder != null">sortOrder=#{menu.sortOrder},</if>
+            <if test="menu.action != null">actionId=#{menu.action.id}</if>
+        </set>
+        WHERE id=#{menu.id}
+    </update>
+
+    <delete id="deleteMenu" parameterType="Menu">
+		DELETE FROM sys_menu WHERE id=#{menu.id}
+	</delete>
+
+    <delete id="deleteRoleMenu" parameterType="Menu">
+		DELETE FROM sys_role_menu WHERE menuId=#{menu.id}
+	</delete>
+
+    <select id="getMenuBySortOrder" parameterType="Menu" resultType="Menu">
+		SELECT * FROM sys_menu WHERE parentId=#{menu.parentId} AND sortOrder=#{menu.sortOrder}
+	</select>
+
+    <update id="updateSortOrder" parameterType="Menu">
+		UPDATE sys_menu SET sortOrder=#{menu.sortOrder} WHERE id=#{menu.id}
+	</update>
+
+
+</mapper>

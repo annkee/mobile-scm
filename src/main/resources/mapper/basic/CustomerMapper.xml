@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctsig.mobilescm.dao.basic.CustomerDao">
+	
+	<resultMap type="Customer" id="customerResult">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="linkMan" column="linkMan"/>
+		<result property="phone" column="phone"/>
+		<result property="email" column="email"/>
+		<result property="address" column="address"/>
+		<result property="fax" column="fax"/>
+		<result property="remark" column="remark"/>
+		
+		<association property="customerType" javaType="CustomerType">
+			<id property="id" column="ct_id"/>
+			<result property="name" column="ct_name"/>
+			<result property="remark" column="ct_remark"/>
+		</association>
+	</resultMap>
+	
+	<select id="queryList" resultMap="customerResult">
+		SELECT
+			c.*,
+			ct.id AS ct_id,
+			ct.name AS ct_name,
+			ct.remark AS ct_remark
+		FROM basic_customer c
+		LEFT JOIN basic_customerType ct ON c.customerTypeId=ct.id
+		<where>
+			<if test="params.id != null">
+				AND c.id=#{params.id}
+			</if>
+			<if test="params.name != null">
+				AND c.name LIKE #{params.name}
+			</if>
+			<if test="params.customerTypeId != null">
+				AND c.customerTypeId=#{params.customerTypeId}
+			</if>
+		</where>
+		<if test="params.start != null">
+			LIMIT #{params.start},#{params.size}
+		</if>
+	</select>
+	
+	<select id="queryCount" resultType="int">
+		SELECT COUNT(*) FROM basic_customer
+		<where>
+			<if test="params.name != null">
+				AND name LIKE #{name}
+			</if>
+			<if test="params.customerTypeId != null">
+				AND customerTypeId=#{params.customerTypeId}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="add">
+		INSERT INTO basic_customer VALUES(#{customer.id},#{customer.name},#{customer.linkMan},#{customer.phone},#{customer.email},
+		#{customer.address},#{customer.fax},#{customer.remark},#{customer.customerType.id})
+	</insert>
+	
+	<update id="edit">
+		UPDATE basic_customer
+		<set>
+			<if test="customer != null">
+				name=#{customer.name},linkMan=#{customer.linkMan},phone=#{customer.phone},email=#{customer.email},
+				address=#{customer.address},fax=#{customer.fax},remark=#{customer.remark},customerTypeId=#{customer.customerType.id}
+			</if>
+			<if test="customerTypeIdKey != null">
+				customerTypeId=NULL
+			</if>
+		</set>
+		<where>
+			<if test="params.customer != null">
+				id=#{customer.id}
+			</if>
+			<if test="customerTypeIdKey != null">
+				customerTypeId=#{customerTypeIdKey}
+			</if>
+		</where>
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM basic_customer WHERE id=#{customer.id}
+	</delete>
+	
+	
+</mapper> 

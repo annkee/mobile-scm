@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>返利价格</title>
+</head>
+
+<body>
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="90%">
+    <tr>
+        <td class="navTd1"></td>
+        <td class="navTd2">基础设置 >>　手机型号管理 >> 返利价格</td>
+        <td class="navTd3"></td>
+    </tr>
+</table>
+<br>
+<table class="table" width="90%" align="center">
+    <tr>
+        <th>返利类别</th>
+        <th>价格</th>
+    </tr>
+    <tr th:each="bonus : ${mobileType.mobileBonusList}">
+        <td th:text="${bonus.bonusTypeName}"></td>
+        <td th:text="${bonus.bonusPrice}"></td>
+    </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctsig.mobilescm.dao.basic.MobileBasicDao">
+	
+	<select id="queryList" resultType="java.util.Map">
+		SELECT * FROM ${params.table}
+	</select>
+	
+	<insert id="add">
+		INSERT INTO ${params.table} VALUES(#{params.id},#{params.data})
+	</insert>
+	
+	<delete id="delete">
+		DELETE FROM ${params.table} WHERE id=#{params.id}
+	</delete>
+	
+	
+</mapper> 

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>角色管理</title>
+    <link th:href="@{../default/css/page.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/table.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/input.css}" rel="stylesheet"/>
+    <script th:src="@{../js/common/jquery.js}"/>
+    <script th:src="@{../js/common/common.js}"/>
+    <script th:src="@{../js/common/tree.js}"/>
+    <script th:src="@{../js/common/init.js}"/>
+    <script th:src="@{../js/common/json2.js}"/>
+    <script th:src="@{../js/common/relate.js}"/>
+</head>
+
+<body>
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="90%">
+    <tr>
+        <td class="navTd1"></td>
+        <td class="navTd2">系统管理 >>　角色管理 >> 角色列表</td>
+        <td class="navTd3"></td>
+    </tr>
+</table>
+<form th:action="@{../role/roleList}" th:object="${role}" method="post" onsubmit="return checkBox()">
+    <table border="0" width="90%" align="center" style="margin-top:10px">
+        <tr>
+            <td width="60" align="left">角色名称:</td>
+            <td width="180" align="left"><input th:field="*{name}" class="text"/></td>
+            <td align="left">
+                <input type="checkbox" th:field="*{status}" th:value="1"/>启用
+                <input type="checkbox" th:field="*{status}" th:value="2"/>禁用
+                <input type="checkbox" th:field="*{status}" th:value="3"/>删除
+            </td>
+            <td align="right">
+                <input type="submit" class="btn find" value="查询"/>
+                <input type="button" class="btn ok" style="width:90px" value="添加角色"
+                       onclick="location='../role/toAddRoleView'"/>
+            </td>
+        </tr>
+    </table>
+</form>
+<table class="table" rowNum="15" width="90%" align="center">
+    <tr>
+        <th>角色名称</th>
+        <th>角色说明</th>
+        <th>角色状态</th>
+        <th>操作</th>
+    </tr>
+    <tr th:each="role : ${roleList}">
+        <td th:text="${role.name}"></td>
+        <td th:text="${role.remark}"></td>
+        <td th:text="${role.statusName}"></td>
+        <td th:if="${roleStatusMap.ROLE_STATUS_DELETE eq role.status}">
+            <a th:href="'../role/restoreRole?roleId='+${role.id}">恢复角色</a>
+        </td>
+        <td th:if="${roleStatusMap.ROLE_STATUS_DELETE ne role.status}">
+            <a th:href="'../role/toEditRoleView?roleId='+${role.id}">编辑</a>
+            <a th:href="'../role/deleteRole?roleId='+${role.id}"
+               onclick="return confirm('确定要删除吗？');">删除</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

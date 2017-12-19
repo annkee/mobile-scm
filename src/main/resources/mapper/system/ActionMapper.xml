@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctsig.mobilescm.dao.system.ActionDao">
+
+    <resultMap type="com.ctsig.mobilescm.domain.system.Action" id="actionResult">
+        <id property="id" column="id"/>
+    </resultMap>
+
+    <select id="getAction" parameterType="com.ctsig.mobilescm.domain.system.Action" resultType="Action">
+		SELECT * FROM sys_action WHERE id=#{action.id}
+	</select>
+
+    <select id="getActionList" parameterType="com.ctsig.mobilescm.domain.system.Action" resultMap="actionResult">
+        SELECT * FROM sys_action
+        <where>
+            <if test="action.type != null">
+                AND type=#{action.type}
+            </if>
+            <if test="action.menuId != null">
+                AND menuId=#{action.menuId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addAction" parameterType="Action">
+		INSERT INTO sys_action(id,name,type,menuId,remark)
+			VALUES(#{action.id},#{action.name},#{action.type},#{action.menuId},#{action.remark})
+	</insert>
+
+    <update id="editAction" parameterType="Action">
+        UPDATE sys_action
+        <set>
+            <if test="action.name != null">name=#{action.name},</if>
+            <if test="action.type != null">type=#{action.type},</if>
+            <if test="action.remark != null">remark=#{action.remark}</if>
+        </set>
+        WHERE id=#{action.id}
+    </update>
+
+    <delete id="deleteAction" parameterType="Action">
+        DELETE FROM sys_action
+        <where>
+            <if test="action.id != null">
+                AND id=#{action.id}
+            </if>
+            <if test="action.menuId != null">
+                AND menuId=#{action.menuId}
+            </if>
+        </where>
+    </delete>
+
+    <delete id="deleteRoleAction" parameterType="Action">
+		DELETE FROM sys_role_action WHERE actionId=#{action.id}
+	</delete>
+
+
+</mapper> 

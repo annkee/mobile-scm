@@ -1,0 +1,71 @@
+<!DOCTYPE HTML >
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>用户列表</title>
+    <link th:href="@{../default/css/page.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/table.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/input.css}" rel="stylesheet"/>
+    <script th:src="@{../js/common/jquery.js}"/>
+    <script th:src="@{../js/common/common.js}"/>
+    <script th:src="@{../js/common/tree.js}"/>
+    <script th:src="@{../js/common/init.js}"/>
+    <script th:src="@{../js/common/json2.js}"/>
+    <script th:src="@{../js/common/relate.js}"/>
+</head>
+
+<body>
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="90%">
+    <tr>
+        <td class="navTd1"></td>
+        <td class="navTd2">系统管理 >>　帐号管理 >> 帐号列表</td>
+        <td class="navTd3"></td>
+    </tr>
+</table>
+<form th:action="@{../user/listUser}" th:object="${user}" method="post">
+    <table border="0" width="90%" align="center" style="margin-top:10px">
+        <tr>
+            <td width="60" align="left">帐号名称:</td>
+            <td width="180" align="left"><input th:field="*{account}" class="text" th:value="${user.account}"/></td>
+            <td align="left">
+                <input type="submit" class="btn find" value="查询"/>
+            </td>
+        </tr>
+    </table>
+</form>
+<table class="table" rowNum="15" width="90%" align="center">
+    <tr>
+        <th>登录帐号</th>
+        <th>员工姓名</th>
+        <th>备注</th>
+        <th>状态</th>
+        <th>创建时间</th>
+        <th>页面主题</th>
+        <th>角色</th>
+        <th>查询范围</th>
+        <th>操作</th>
+    </tr>
+    <tr th:each="user : ${userList}">
+        <td th:text="${user.account}"></td>
+        <td th:text="${user.employee.name}"></td>
+        <td th:text="${user.remark}"></td>
+        <td th:text="${user.statusName}"></td>
+        <td th:text="${user.createTimeStr}"></td>
+        <td th:text="${user.skin}"></td>
+        <td>
+            <span th:each="role : ${user.roleList}" th:text="${role.name}+'、'"></span>
+        </td>
+        <td>
+            <span th:each="department : ${user.departmentList}" th:text="${department.name}+'、'"></span>
+        </td>
+        <td th:if="${2 eq user.status}">
+            <a th:href="'../user/restoreUser?id='+${user.id}">恢复帐号</a>
+        </td>
+        <td th:if="${1 eq user.status}">
+            <a th:href="'../user/toEditUserView?id='+${user.id}">编辑</a>
+            <a th:href="'../user/deleteUser?id='+${user.id}+'&amp;employeeId='+${user.employee.id}"
+               onclick="return confirm('确定要删除吗？');">删除</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

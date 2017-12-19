@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>供应商类别</title>
+    <link th:href="@{../default/css/page.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/table.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/input.css}" rel="stylesheet"/>
+    <script th:src="@{../js/common/jquery.js}"/>
+    <script th:src="@{../js/common/common.js}"/>
+    <script th:src="@{../js/common/tree.js}"/>
+    <script th:src="@{../js/common/init.js}"/>
+    <script th:src="@{../js/common/json2.js}"/>
+    <script th:src="@{../js/common/relate.js}"/>
+    <script th:src="@{../js/basic/supplier.js}"/>
+</head>
+
+<body>
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="90%">
+    <tr>
+        <td class="navTd1"></td>
+        <td class="navTd2">基础设置 >>　供应商类别管理 >> 类别列表</td>
+        <td class="navTd3"></td>
+    </tr>
+</table>
+<form action="../supplierType/list" th:object="${supplierType}" method="post">
+    <table border="0" width="90%" align="center" style="margin-top:10px">
+        <tr>
+            <td align="right">
+                <input type="button" class="btn ok" style="width:90px" value="添加类别"
+                       onclick="location='../supplierType/toAdd'"/>
+            </td>
+        </tr>
+    </table>
+</form>
+<table class="table" rowNum="15" width="90%" align="center">
+    <tr>
+        <th>类别编码</th>
+        <th>类别名称</th>
+        <th>备注</th>
+        <th>操作</th>
+    </tr>
+    <tr th:each="type : ${supplierTypeList}">
+        <td th:text="${type.id}"></td>
+        <td th:text="${type.name}"></td>
+        <td th:text="${type.remark}"></td>
+        <td>
+            <a th:href="'../supplierType/toEdit?supplierTypeId='+${type.id}">编辑</a>
+            <a th:href="'../supplierType/delete?supplierTypeId='+${type.id}"
+               onclick="return confirm('确定要删除吗？');">删除</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

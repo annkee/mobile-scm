@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>菜单管理</title>
+    <link th:href="@{../default/css/page.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/table.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/input.css}" rel="stylesheet"/>
+    <script th:src="@{../js/common/jquery.js}"/>
+    <script th:src="@{../js/common/common.js}"/>
+    <script th:src="@{../js/common/tree.js}"/>
+    <script th:src="@{../js/common/init.js}"/>
+    <script th:src="@{../js/common/json2.js}"/>
+    <script th:src="@{../js/common/relate.js}"/>
+    <script th:src="@{../js/dev/menu.js}"/>
+</head>
+
+<body>
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="500">
+    <tr>
+        <td class="navTd1"></td>
+        <td class="navTd2">菜单管理 >> 编辑动作</td>
+        <td class="navTd3"></td>
+    </tr>
+</table>
+<form>
+    <table width="500" align="center" class="inputTable" style="margin-top:15px">
+        <tr>
+            <th>所属菜单：</th>
+            <td>
+                <span th:text="${menu.name}"></span>
+                <input type="hidden" name="menuId" th:value="${menu.id}"/>
+            </td>
+        </tr>
+        <tr id="menuNameRow">
+            <th>动作：</th>
+            <td>
+                <input name="actionName" class="text" th:value="${action.name}"/>
+                <input type="hidden" name="actionId" th:value="${action.id}"/>
+                <input type="hidden" name="actionMenuId" th:value="${action.menuId}"/>
+            </td>
+        </tr>
+        <tr>
+            <th>动作类型：</th>
+            <td th:if="${action.type == 1}">
+                <input type="radio" name="actionType" value="1" checked="checked"/>普通动作
+                <input type="radio" name="actionType" value="2"/>授权动作
+            </td>
+            <td th:if="${action.type == 2}">
+                <input type="radio" name="actionType" value="1"/>普通动作
+                <input type="radio" name="actionType" value="2" checked="checked"/>授权动作
+            </td>
+        </tr>
+        <tr>
+            <th>动作说明</th>
+            <td><textarea name="actionRemark" class="text" style="width:300px;height:56px"
+                          th:text="${action.remark}"></textarea></td>
+        </tr>
+    </table>
+    <table width="500" align="center" style="margin-top:15px">
+        <tr>
+            <td align="center">
+                <input type="button" class="btn ok" value="确定" onclick="submitActionEdit()"/>
+                <input type="button" class="btn cancel" value="取消" onclick="cans()"/>
+                <input type="hidden" name="cancel" th:value="${menu.id}+'&amp;menuType='+${menu.type}"/>
+            </td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>

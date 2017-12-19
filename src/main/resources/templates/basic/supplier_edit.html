@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>编辑供应商</title>
+    <link th:href="@{../default/css/page.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/table.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/input.css}" rel="stylesheet"/>
+    <script th:src="@{../js/common/jquery.js}"/>
+    <script th:src="@{../js/common/common.js}"/>
+    <script th:src="@{../js/common/tree.js}"/>
+    <script th:src="@{../js/common/init.js}"/>
+    <script th:src="@{../js/common/json2.js}"/>
+    <script th:src="@{../js/common/relate.js}"/>
+    <script th:src="@{../js/basic/supplier.js}"/>
+</head>
+
+<body>
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="90%">
+    <tr>
+        <td class="navTd1"></td>
+        <td class="navTd2">基础设置 >>　供应商管理 >> 修改供应商</td>
+        <td class="navTd3"></td>
+    </tr>
+</table>
+<form action="../supplier/edit" method="post" th:object="${supplier}" onsubmit="return checkFrm();">
+    <table width="500" align="center" style="margin-top:30px" class="inputTable">
+        <tr>
+            <th>供应商编号：</th>
+            <td><input type="text" readonly="readonly" name="id" th:value="${supplier.id}"/></td>
+        </tr>
+        <tr>
+            <th>供应商名称：</th>
+            <td><input class="text" name="name" th:value="${supplier.name}"/></td>
+        </tr>
+        <tr>
+            <th>类别：</th>
+            <td>
+                <select name="supplierType.id">
+                    <!--<c:forEach items="" var="stype">-->
+                    <option th:each="stype : ${supplierTypeList}" th:value="${stype.id}"
+                            th:if="${supplier.supplierType.id eq stype.id}" selected="selected"
+                            th:text="${stype.name}"></option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>联系人：</th>
+            <td><input class="text" name="linkMan" th:value="${supplier.linkMan}"/></td>
+        </tr>
+        <tr>
+            <th>电话：</th>
+            <td><input class="text" name="phone" th:value="${supplier.phone}"/></td>
+        </tr>
+        <tr>
+            <th>EMAIL：</th>
+            <td><input class="text" name="email" th:value="${supplier.email}"/></td>
+        </tr>
+        <tr>
+            <th>地址：</th>
+            <td><textarea class="text" name="address"
+                          style="width:300px;height:46px" th:text="${supplier.address}"></textarea></td>
+        </tr>
+        <tr>
+            <th>备注：</th>
+            <td><textarea class="text" name="remark"
+                          style="width:300px;height:46px" th:text="${supplier.remark}"></textarea></td>
+        </tr>
+
+    </table>
+    <table border="0" width="500" align="center" style="margin-top:20px">
+        <tr>
+            <td align="center">
+                <input type="submit" class="btn ok" value="确定"/>
+                <input type="button" class="btn cancel" value="取消" onclick="location='../supplier/list'"/>
+            </td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>

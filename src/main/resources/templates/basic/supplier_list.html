@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>供应商列表</title>
+    <link th:href="@{../default/css/page.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/table.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/input.css}" rel="stylesheet"/>
+    <script th:src="@{../js/common/jquery.js}"/>
+    <script th:src="@{../js/common/common.js}"/>
+    <script th:src="@{../js/common/tree.js}"/>
+    <script th:src="@{../js/common/init.js}"/>
+    <script th:src="@{../js/common/json2.js}"/>
+    <script th:src="@{../js/common/relate.js}"/>
+</head>
+
+<body>
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="90%">
+    <tr>
+        <td class="navTd1"></td>
+        <td class="navTd2">基础设置 >>　供应商管理 >> 供应商列表</td>
+        <td class="navTd3"></td>
+    </tr>
+</table>
+<form action="../supplier/list" th:object="${supplier}" method="post">
+    <table border="0" width="90%" align="center" style="margin-top:10px">
+        <tr>
+            <td width='80'>供应商类别：</td>
+            <td>
+                <select name="id">
+                    <option value="">--全部类别--</option>
+                    <!--<c:forEach items="${supplierTypeList}" var="stype">
+                    th:if="${supplier.supplierType!=null and supplier.supplierType.id eq stype.id}"
+                            selected="selected"
+                    -->
+                    <option th:each="stype : ${supplierTypeList}" th:value="${stype.id}"
+                            th:text="${stype.name}">
+                    </option>
+                </select>
+            </td>
+            <td width='80'>供应商名称：</td>
+            <td><input class="text" name="name" th:value="${supplier.name}"/></td>
+            <td align="right">
+                <input type="submit" class="btn find" value="查询"/>
+                <input type="button" class="btn ok" style="width:90px" value="添加供应商"
+                       onclick="location='../supplier/toAdd'"/>
+            </td>
+        </tr>
+    </table>
+</form>
+<table class="table" rowNum="15" width="90%" align="center">
+    <tr>
+        <th>供应商编号</th>
+        <th>供应商名称</th>
+        <th>类别</th>
+        <th>联系人</th>
+        <th>电话</th>
+        <th>EMAIL</th>
+        <th>地址</th>
+        <th>备注</th>
+        <th>操作</th>
+    </tr>
+    <tr th:each="supplier : ${supplierList}">
+        <td th:text="${supplier.id}"></td>
+        <td th:text="${supplier.name}"></td>
+        <td th:text="${supplier.supplierType.name}"></td>
+        <td th:text="${supplier.linkMan}"></td>
+        <td th:text="${supplier.phone}"></td>
+        <td th:text="${supplier.email}"></td>
+        <td th:text="${supplier.address}"></td>
+        <td th:text="${supplier.remark}"></td>
+        <td>
+            <a th:href="'../supplier/toEdit?supplierId='+${supplier.id}">编辑</a>
+            <a th:href="'../supplier/delete?supplierId='+${supplier.id}"
+               onclick="return confirm('确定要删除吗？');">删除</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

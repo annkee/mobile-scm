@@ -1,0 +1,82 @@
+<!DOCTYPE HTML >
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>添加客户</title>
+    <link th:href="@{../default/css/page.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/table.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/input.css}" rel="stylesheet"/>
+    <script th:src="@{../js/common/jquery.js}"/>
+    <script th:src="@{../js/common/common.js}"/>
+    <script th:src="@{../js/common/tree.js}"/>
+    <script th:src="@{../js/common/init.js}"/>
+    <script th:src="@{../js/common/json2.js}"/>
+    <script th:src="@{../js/common/relate.js}"/>
+</head>
+
+<body>
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="90%">
+    <tr>
+        <td class="navTd1"></td>
+        <td class="navTd2">基础设置 >>　客户管理 >> 客户列表</td>
+        <td class="navTd3"></td>
+    </tr>
+</table>
+<form action="../customer/list" th:object="${customer}" method="post">
+    <table border="0" width="90%" align="center" style="margin-top:10px">
+        <tr>
+            <td>客户类别:</td>
+            <td>
+                <select class="text" name="customerType.id">
+                    <option value="">--全部类别--</option>
+                    <option th:each="ctype : ${customerTypeList}" th:value="${ctype.id}" th:text="${ctype.name}"></option>
+                </select>
+            </td>
+            <td>客户名称</td>
+            <td><input class="text" name="name" th:value="${customer.name}"/></td>
+            <td align="right">
+                <input type="submit" class="btn find" value="查询"/>
+                <input type="button" class="btn ok" style="width:90px" value="添加客户"
+                       onclick="location='../customer/toAdd'"/>
+            </td>
+        </tr>
+    </table>
+</form>
+<table class="table" rowNum="15" width="90%" align="center">
+    <tr>
+        <th>客户编号</th>
+        <th>客户名称</th>
+        <th>类别</th>
+        <th>联系人</th>
+        <th>电话</th>
+        <th>EMAIL</th>
+        <th>地址</th>
+        <th>传真</th>
+        <th>备注</th>
+        <th>操作</th>
+    </tr>
+    <tr th:each="cust : ${page.dataList}">
+        <td th:text="${cust.id}"></td>
+        <td th:text="${cust.name}"></td>
+        <td th:text="${cust.customerType.name}"></td>
+        <td th:text="${cust.linkMan}"></td>
+        <td th:text="${cust.phone}"></td>
+        <td th:text="${cust.email}"></td>
+        <td th:text="${cust.address}"></td>
+        <td th:text="${cust.fax}"></td>
+        <td th:text="${cust.remark}"></td>
+        <td>
+            <a th:href="'../customer/toEdit?customerId='+${cust.id}">编辑</a>
+            <a th:href="'../customer/delete?customerId='+${cust.id}"
+               onclick="return confirm('确定要删除吗？');">删除</a>
+        </td>
+    </tr>
+</table>
+<input type="hidden" id="page" th:value="${page.pageCode}"/>
+<script>
+    //    追加html分页代码
+    var pages = $("#page");
+    var data = pages.val();
+    pages.after(data);
+</script>
+</body>
+</html>

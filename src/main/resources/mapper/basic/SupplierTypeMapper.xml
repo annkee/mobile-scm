@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctsig.mobilescm.dao.basic.SupplierTypeDao">
+	
+	<select id="queryList" resultType="SupplierType">
+		SELECT * FROM basic_supplierType
+		<where>
+			<if test="params.id != null">
+				id=#{params.id}
+			</if>
+		</where>
+		ORDER BY id
+	</select>
+	
+	<insert id="add">
+		INSERT INTO basic_supplierType VALUES(#{supplierType.id},#{supplierType.name},#{supplierType.remark})
+	</insert>
+	
+	<update id="edit">
+		UPDATE basic_supplierType 
+		SET name=#{supplierType.name},remark=#{supplierType.remark}
+		WHERE id=#{supplierType.id}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM basic_supplierType WHERE id=#{supplierType.id}
+	</delete>
+	
+	
+</mapper> 

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>菜单管理</title>
+    <link th:href="@{../default/css/page.css}" rel="stylesheet"/>
+    <link th:href="@{../default/css/table.css}" rel="stylesheet"/>
+    <!--<%@ include file="/WEB-INF/view/include/js.jsp" %>-->
+    <!--该怎么引入纯js的html文件
+    <link th:include="../include/js.html" />-->
+    <script th:src="@{../js/common/jquery.js}"/>
+    <script th:src="@{../js/common/common.js}"/>
+    <script th:src="@{../js/common/tree.js}"/>
+    <script th:src="@{../js/common/init.js}"/>
+    <script th:src="@{../js/common/json2.js}"/>
+    <script th:src="@{../js/common/relate.js}"/>
+    <script th:src="@{../js/common/tree.js}"/>
+    <script th:src="@{../js/dev/menu_manage.js}"/>
+</head>
+
+<body style="margin: 8px">
+<table class="table" width="98%" align="center">
+    <tr>
+        <td width="200" id="treeContainer"
+            style="text-align: left; vertical-align: top; padding-left: 8px">
+
+        </td>
+        <td id="menuDetail" style="padding: 0px">
+            <iframe id="ifrm" name="menuDetail" frameborder="0" width="100%"
+                    height="100%" src="../menu/menuDetail?menuId=root&amp;menuType=1"></iframe>
+            <!--&amp;替换&,否则报错-->
+        </td>
+    </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,42 @@
+.table {
+    font-size: 12px;
+    border-collapse: collapse;
+    border-top: 1px solid #7F9DB9;
+    border-left: 1px solid #7F9DB9;
+}
+
+.table td, .table th {
+    vertical-align: middle;
+    border-bottom: 1px solid #7F9DB9;
+    border-right: 1px solid #7F9DB9;
+    padding: 2px;
+    text-align: center;
+    line-height: 18px;
+}
+
+.table th {
+    font-weight: normal;
+    background-color: #C3DAF9;
+}
+
+.inputTable {
+    font-size: 12px;
+    border-collapse: collapse;
+    border-top: 1px solid #7F9DB9;
+    border-left: 1px solid #7F9DB9;
+}
+
+.inputTable td, .inputTable th {
+    vertical-align: middle;
+    text-align: left;
+    border-bottom: 1px solid #7F9DB9;
+    border-right: 1px solid #7F9DB9;
+    padding: 2px 0 2px 18px;
+    line-height: 20px;
+}
+
+.inputTable th {
+    font-weight: normal;
+    background-color: #C3DAF9;
+}
+
